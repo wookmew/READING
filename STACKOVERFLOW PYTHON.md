@@ -141,38 +141,38 @@ print_globvar()       # Prints 1
 
 **9. 如何检测一个变量是否存在**
 检测本地变量<br/>
-'''python
+```python
 if 'x' in locals():
     #x exists
-'''
+```
 检测全局变量<br/>
-'''python
+```python
 if 'x' in globals():
     #x exists
-'''
+```
 检查一个对象是否包含某个属性<br/>
-'''python
+```python
 if hasattr(obj, 'attr_name'):
     #obj.attr_name exists
-'''
+```
 
 **10. python中是否存在三元运算符**<br/>
 三元运算符在Python2.5中被加入
-'''python
+```python
 a if test else b
-'''
+```
 使用
-'''python
-'true' if True else 'false'
+```python
+>>> 'true' if True else 'false'
 'true'
-'true' if False else 'false'
+>>> 'true' if False else 'false'
 'false'
-'''
+```
 [doc](https://docs.python.org/3.3/faq/programming.html#is-there-an-equivalent-of-c-s-ternary-operator)
 
 **11. python中的de-while**<br/>
 实现：
-'''python
+```python
 while True:
     stuff()
     if fail_condition:
@@ -181,7 +181,7 @@ or
 stuff()
 while not fail_condition:
     stuff()
-'''
+```
 
 **12. 相对于range() 应该更倾向于实用xrange()?**<br/>
 就性能而言, 特别是当你迭代一个大的range, xrange()更优. 但是, 有一些情况下range()更优:<br/>
@@ -194,24 +194,24 @@ while not fail_condition:
 
 +=调用了[__iadd__](https://docs.python.org/2/reference/datamodel.html#object.__iadd__)方法（如果存在—不存在就退一步调用__add__），然而+调用[__add__方法](https://docs.python.org/2/reference/datamodel.html#object.__add__)<br/>
 从一个API的角度，__iadd__期望被使用在恰当的位置修改易变的对象（返回的对象也是转变后的），而__add__应该返回某些东西的一个新的实例。对于不可变对象，两种方法都返回新的实例，但__iadd__会把新的实例放在和旧实例名字**相同的命名空间里**。这就是为什么:<br/>
-'''python
+```python
 i = 1
 i += 1
-'''
+```
 看上去增量i，实际上，你得到了一个新的数值，并且转移到了i的最上面—丢掉了旧的数值的引用。在这种情况下，i += 1和i = i + 1是完全一样的。但是，对于大多数可变对象，这是完全不同的：<br/>
-'''python
+```python
 a = [1, 2, 3]
 b = a
 b += [1, 2, 3]
 print a  #[1, 2, 3, 1, 2, 3]
 print b  #[1, 2, 3, 1, 2, 3]
-'''
+```
 对比一下<br/>
-'''python
+```python
 a = [1, 2, 3]
 b = a
 b = b + [1, 2, 3]
 print a #[1, 2, 3]
 print b #[1, 2, 3, 1, 2, 3]
-'''
+```
 注意第一个例子，从b和a代表相同的对象开始，当我对b使用+=，实际上它改变了b（a看起来也改变了- -毕竟他们代表同一个列表）。但是在第二个例子里，当我进行b = b + [1, 2, 3]操作时，b被引用并且和一个新的列表[1, 2, 3]联系了起来。之后在b的命名空间保存了这个关联的列表- -不考虑b之前的序列。<br/>

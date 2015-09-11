@@ -1,5 +1,6 @@
 #[STACKOVERFLOW PYTHON 百问](http://www.wklken.me/posts/2013/07/20/python-stackoverflow-vote-top.html#_1)
 > 原作地址奉上，此处仅作自己的学习。
+<br/>
 ##基本语法控制流相关
 ---
 **1. 如何退出一个python脚本**<br/>
@@ -162,9 +163,9 @@ a if test else b
 '''
 使用
 '''python
->>> 'true' if True else 'false'
+'true' if True else 'false'
 'true'
->>> 'true' if False else 'false'
+'true' if False else 'false'
 'false'
 '''
 [doc](https://docs.python.org/3.3/faq/programming.html#is-there-an-equivalent-of-c-s-ternary-operator)

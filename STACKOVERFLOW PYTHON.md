@@ -1,7 +1,21 @@
 #[STACKOVERFLOW PYTHON 百问](http://www.wklken.me/posts/2013/07/20/python-stackoverflow-vote-top.html#_1)
-> 原作地址奉上，此处仅作自己的学习。看完这个，要去重新补习一下基础了，要不然终归只是会个皮毛罢了。只会google，悲哀。
+> 原作地址奉上，此处仅作自己的学习。看完这个，要去重新补习一下基础了，要不然终归只是会个皮毛罢了。
 <br/>
----
+
+
+##目录
+> 基础  
+
+- [基本语法控制流相关](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#基本语法控制流相关)
+- [字符串相关](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#字符串相关)
+- [文件相关](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#文件相关)
+- [数学相关](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#数学相关)  
+
+> 基本数据结构  
+- [列表](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#列表)
+- [元组](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#元组)
+- [字典](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#字典)
+
 
 ##基本语法控制流相关
 **1. 如何退出一个python脚本**<br/>
@@ -140,7 +154,7 @@ print_globvar()       # Prints 1
 ```
 我猜想这么做的原因是，全局变量很危险，Python想要确保你真的知道你要对一个全局的变量进行操作<br/>
 
-**9. 如何检测一个变量是否存在**
+**9. 如何检测一个变量是否存在**<br/>
 检测本地变量<br/>
 ```python
 if 'x' in locals():
@@ -784,3 +798,546 @@ count += 1
 - 只是简单的解析。严格来说，*++count*是模糊的，因为它是*+*,*+*,*count*（两个一元*+*操作符）简化为*++*和*count*（只是一元的*++*操作符），不是什么严重的语病，但是他确实存在。<br/>
 - 简单说。*++*只不过是*+=* 1的同义词。它是一个简短的发明，因为C编译器太蠢不能把*a += 1*优化为几乎所有电脑都有的*inc*。这个年代，优化编译器和字节码的解释语言，向语言中添加操作符允许程序员优化他们的代码这种事情通常会引起不满，尤其是像Python这种设计为解释和阅读型的语言。<br/>
 - 混乱的副作用。在含有*++*的语言中一个常见的新手错误就是混合了它和pre-，post-自增/自减操作符的区别（无论是优先级，还是返回值），而且Python喜欢消除一些语言陷阱。前期增量后期增量的优先级在C语言中表现的非常糟糕，而且难以置信的容易出错。<br/>
+
+## 列表
+**1. 序列的切片操作**<br/>
+```python
+a[start:end] # start 到 end-1
+a[start:]    # start 到 末尾
+a[:end]      # 0 到 end-1
+a[:]         # 整个列表的拷贝
+```
+还有一个step变量，控制步长,可在上面语法中使用<br/>
+```python
+a[start:end:step] # start through not past end, by step
+```
+注意，左闭右开。其他特点，开始或结束下标可能是负数，表示从序列末尾开始计算而非从头开始计算,所以：<br/>
+```python
+a[-1]    # 最后一个元素
+a[-2:]   # 最后两个元素
+a[:-2]   # 除了最后两个元素
+```
+Python对程序员很友好，如果序列中存在的元素数量少于你要的，例如，你请求 a[:-2] 。但是a只有一个元素，你会得到一个空列表，而不是一个错误.有时候你或许希望返回的是一个错误，所以你必须知道这点。<br/>
+
+**2. 判断一个列表为空得最佳实践**<br/>
+```python
+if not a:
+    print "List is empty"
+#不要用len(a)来判断
+```
+
+**3. 如何合并两个列表**<br/>
+```python
+listone = [1,2,3]
+listtwo = [4,5,6]
+#outcome we expect: mergedlist == [1, 2, 3, 4, 5, 6]
+```
+- 不考虑顺序（原来问题不是很明确）<br/>
+```python
+listone + listtwo
+#linstone.extend(listtwo)也行，就是会修改listone
+```
+- 考虑顺序做些处理<br/>
+```python
+>>> listone = [1,2,3]
+>>> listtwo = [4,5,6]
+>>> import itertools
+>>> for item in itertools.chain(listone, listtwo):
+...     print item
+1
+2
+3
+4
+5
+6
+```
+
+**4. 如何获取一个列表的长度**<br/>
+python中是不是只有这种方法可以获取长度？语法很奇怪<br/>
+```python
+arr.__len__()
+```
+应该使用这种方式<br/>
+```python
+mylist = [1, 2, 3, 4, 5]
+len(mylist)
+```
+这样做法，不需要对每个容器都定义一个.length()方法，你可以使用len()检查所有实现了len()方法的对象<br/>
+
+**5. Python中如何复制一个列表**<br/>
+可以用切片的方法<br/>
+```python
+new_list = old_list[:]
+```
+可以使用list()函数<br/>
+```python
+new_list = list(old_list)
+```
+可以使用copy.copy(),比list()稍慢，因为它首先去查询old_list的数据类型<br/>
+```python
+import copy
+mew_list = copy.copy(old_list)
+```
+如果列表中包含对象，可以使用copy.deepcopy(), 所有方法中最慢，但有时候无法避免<br/>
+```python
+import copy
+mew_list = copy.deepcopy(old_list)
+```
+例子：<br/>
+```python
+import copy
+class Foo(object):
+    def __init__(self, val):
+        self.val = val
+
+    def __repr__(self):
+        return str(self.val)
+foo = Foo(1)
+
+a = ['foo', foo]
+b = a[:]
+c = list(a)
+d = copy.copy(a)
+e = copy.deepcopy(a)
+
+# edit orignal list and instance
+a.append('baz')
+foo.val = 5
+
+print "original: %r\n slice: %r\n list(): %r\n copy: %r\n deepcopy: %r" \
+       % (a, b, c, d, e)
+```
+结果：<br/>
+```python
+original: ['foo', 5, 'baz']
+slice: ['foo', 5]
+list(): ['foo', 5]
+copy: ['foo', 5]
+deepcopy: ['foo', 1]
+```
+效率简单比较：<br/>
+```python
+10.59 - copy.deepcopy(old_list)
+10.16 - pure python Copy() method copying classes with deepcopy
+1.488 - pure python Copy() method not copying classes (only dicts/lists/tuples)
+0.325 - for item in old_list: new_list.append(item)
+0.217 - [i for i in old_list] (a list comprehension)
+0.186 - copy.copy(old_list)
+0.075 - list(old_list)
+0.053 - new_list = []; new_list.extend(old_list)
+0.039 - old_list[:] (list slicing)
+```
+
+**5. 列表的append和extend的区别**<br/>
+```python
+>>> x = [1, 2]
+>>> x.append(3)
+>>> x
+[1, 2, 3]
+>>> x.append([4,5])
+>>> x
+[1, 2, 3, [4, 5]]
+>>>
+>>> x = [1, 2, 3]
+>>> x.extend([4, 5])
+>>> x
+[1, 2, 3, 4, 5]
+```
+
+**6. 如何随机地从列表中抽取变量**<br/>
+```python
+foo = ['a', 'b', 'c', 'd', 'e']
+from random import choice
+print choice(foo)
+```
+
+**7. 如何利用下标从列表中删除一个元素**<br/>
+- del<br/>
+```python
+In [9]: a = range(10)
+In [10]: a
+Out[10]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+In [11]: del a[-1]
+In [12]: a
+Out[12]: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+```
+- pop(pop可根据下标来删除)<br/>
+```python
+a = ['a', 'b', 'c', 'd']
+a.pop(1)
+# now a is ['a', 'c', 'd']
+
+a = ['a', 'b', 'c', 'd']
+a.pop()
+# now a is ['a', 'b', 'c']
+```
+
+**8. 获取列表的最后一个元素**<br/>
+```python
+result = l[-1]
+result = l.pop() #pop居然可以这么用，删掉l最后一个元素同时，赋值给result
+```
+
+**9. 如何将一个列表切分成若干个长度相同的子序列**<br/>
+想要得到这样的效果：<br/>
+```python
+l = range(1, 1000)
+print chunks(l, 10) -> [ [ 1..10 ], [ 11..20 ], .., [ 991..999 ] ]
+```
+使用yield:<br/>
+```python
+def chunks(l, n):
+    """ Yield successive n-sized chunks from l.
+    """
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
+list(chunks(range(10, 75), 10))
+```
+直接处理<br/>
+```python
+def chunks(l, n):
+    return [l[i:i+n] for i in range(0, len(l), n)]
+```
+
+**10. 如何删除一个list中重复的值同时保证原有顺序**<br/>
+最快的方法：<br/>
+```python
+def f7(seq):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in seq if x not in seen and not seen_add(x)]
+```
+如果你需要在同一个数据集中多次是哦那个这个方法，或许你可以使用[ordered set](http://code.activestate.com/recipes/528878/)处理。插入，删除和归属判断复杂度都是O(1)。<br/>
+
+**11. 如何在遍历一个list时删除某些元素**<br/>
+使用列表解析<br/>
+```python
+somelist = [x for x in somelist if determine(x)]
+```
+上面那个操作将产生一个全新的somelist对象，而失去了对原有somelist对象的引用<br/>
+```python
+#在原有对象上进行修改
+somelist[:] = [x for x in somelist if determine(x)]
+```
+使用itertools<br/>
+```python
+from itertools import ifilterfalse
+somelist[:] = list(ifilterfalse(determine, somelist))
+```
+
+**12. 如何获取list中包含某个元素所在的下标**<br/>
+```python
+>>> ["foo","bar","baz"].index('bar')
+1
+```
+[doc](http://docs.python.org/2/tutorial/datastructures.html#more-on-lists)
+
+**13. 如何扁平一个二维数组**<br/>
+```python
+problem:
+l = [[1,2,3],[4,5,6], [7], [8,9]]
+变为[1, 2, 3, 4, 5, 6, 4, 5, 6, 7, 8, 9]
+```
+列表解析<br/>
+```python
+[item for sublist in l for item in sublist]
+```
+itertools<br/>
+```python
+[item for sublist in l for item in sublist]
+```
+itertools<br/>
+```python
+>>> import itertools
+>>> list2d = [[1,2,3],[4,5,6], [7], [8,9]]
+>>> merged = list(itertools.chain(*list2d))
+
+# python >= 2.6
+>>> import itertools
+>>> list2d = [[1,2,3],[4,5,6], [7], [8,9]]
+>>> merged = list(itertools.chain.from_iterable(list2d))
+```
+sum<br/>
+```python
+sum(l, []) #碉堡了
+```
+
+**14. 列表解析和map**<br/>
+更喜欢使用map()而不是列表解析的原因是什么？<br/>
+在某些情况下，map性能更高一些(当你不是为了某些目的而使用lambda，而是在map和列表解析中使用相同函数).列表解析在另一些情况下性能更好，并且大多数pythonistas认为这样更简洁直接<br/>
+使用相同函数，略微优势<br/>
+```python
+$ python -mtimeit -s'xs=range(10)' 'map(hex, xs)'
+100000 loops, best of 3: 4.86 usec per loop
+$ python -mtimeit -s'xs=range(10)' '[hex(x) for x in xs]'
+100000 loops, best of 3: 5.58 usec per loop
+```
+相反情况，使用lambda<br/>
+```python
+$ python -mtimeit -s'xs=range(10)' 'map(lambda x: x+2, xs)'
+100000 loops, best of 3: 4.24 usec per loop
+$ python -mtimeit -s'xs=range(10)' '[x+2 for x in xs]'
+100000 loops, best of 3: 2.32 usec per loop
+```
+
+**15. 列表和元组有什么区别**<br/>
+除了元组是不可变的之外，还有一个语义的区别去控制它们的使用。元组是各种结构类型混杂的（比如，它们的入口有不同的含义），列表则是一致的序列。元组有结构，列表有顺序。<br/>
+根据这种据别，刻意让代码更为明确和易理解。<br/>
+用页数和行数来定义一本书中的位置的例子：<br/>
+```python
+my_location = (42, 11)  # page number, line number
+```
+然后你可以在一个字典里把这个当做键保存位置的记录。然而列表可以用来存储多点定位。通常会想添加或移除一个列表中的某个定位，所以列表是可变的。另一方面，为了保持行数的完好无损，而改变页书的值似乎说不通，这很可能会给你一个新的定位。而且，可能有很完美的解决办法用来处理正确的行数（而不是替换所有的元组）<br/>
+这一点，有很多有趣的文章，比如[”Python Tuples are Not Just Constant Lists” ](http://jtauber.com/blog/2006/04/15/python_tuples_are_not_just_constant_lists/)or [“Understanding tuples vs. lists in Python”](http://news.e-scribe.com/397)。Python官方文档也提到了[“元组是不可变对象，并且用于包含哪些混杂的序列…”](https://docs.python.org/2/tutorial/datastructures.html#tuples-and-sequences)。<br/>
+在一个动态类型语言比如haskell，元组通常有不同的类型，并且元组的长度必须是固定的。在列表中值必须是同一种类型，值长度不需要固定。所以区别很明显。<br/>
+最后，Python中还有一个[nametuple](https://docs.python.org/dev/library/collections.html#collections.namedtuple)，合理表示一个元组已经有的结构。这些突出的想法明确了元组是类和实例的一种轻型的替换。<br/>
+
+**16. Python 2.7里[...]是什么？**<br/>
+[问题](http://stackoverflow.com/questions/17160162/what-is-in-python-2-7).建议观看原问题链接<br/>
+它意味着你在它的内部创建了一个无限嵌套的不能打印的列表。p包含一个包含p的p...等等。[...]就是一种让你知道问题的标记，为了通告信息，它不能被而代表。<br/>
+
+## 元组
+**1. Python中的命名元组是什么？**<br/>
+命名元组基本上是一种易创建，轻量的对象类型。命名元组实例像值引用一样被对象引用或者使用基础的元组语法。他们可以像*struct*或者其他常用的记录类型一样被使用，除了他们是不可变的。他们在Python 2.6和Python 3.0中被加入。尽管有一个在[Python2.4中实现的秘诀](http://code.activestate.com/recipes/500261/)<br/>
+举个例子，通常我们要顶一个点，用元组表示*(x, y)*。用代码写出来像下面这样：<br/>
+```python
+pt1 = (1.0, 5.0)
+pt2 = (2.5, 1.5)
+
+from math import sqrt
+line_length = sqrt((pt1[0]-pt2[0])**2 + (pt1[1]-pt2[1])**2)
+```
+使用命名元组可以更可读：<br/>
+```python
+from collections import namedtuple
+Point = namedtuple('Point', 'x y')
+pt1 = Point(1.0, 5.0)
+pt2 = Point(2.5, 1.5)
+
+from math import sqrt
+line_length = sqrt((pt1.x-pt2.x)**2 + (pt1.y-pt2.y)**2)
+```
+然而，命名元组仍然向下兼容普通的元组，所以下面的代码仍然有效：<br/>
+```python
+Point = namedtuple('Point', 'x y')
+pt1 = Point(1.0, 5.0)
+pt2 = Point(2.5, 1.5)
+
+from math import sqrt
+# use index referencing
+line_length = sqrt((pt1[0]-pt2[0])**2 + (pt1[1]-pt2[1])**2)
+ # use tuple unpacking
+x1, y1 = pt1
+```
+因此，如果你认为对象标记可以让你的代码更Pythonic、更可读，那么请将所有的元组替换为命名元组。我个人已经开始使用命名元组去替代非常简单的值类型，尤其是那些要作为参数传入函数的东西。它让函数不用知道元组的包装内容，更加具有可读性。<br/>
+长远点说，你还可以用命名元组替代不含方法的普通不可变类。你还可以把你的命名元组类型作为基类：<br/>
+```python
+class Point(namedtuple('Point', 'X y')):
+    [...]
+```
+当然，作为元组，命名元组中的属性仍然是不可变的：<br/>
+```python
+>>> Point = namedtuple('Point', 'x y')
+>>> pt1 = Point(1.0, 5.0)
+>>> pt1.x = 2.0
+AttributeError: can't set attribute
+```
+如果你想改变这些值，你需要另一个类型。有一个方便的方法[mutable recordtypes](http://code.activestate.com/recipes/576555/)，它允许你把修改属性为新的值。<br/>
+```python
+>>> from rcdtype import *
+>>> Piont = recordtype('Point', 'x y')
+>>> pt1 = Ponit(1.0, 5.0)
+>>> pt1.x = 2.0
+>>> print(pt1[0])
+    2.0
+```
+我仍然不知道有任何”命名列表“的结构，可以让你添加新的区块。这种情况下你可能只是需要用一个字典。命名元组可以转化成字典，用*pt1._asdict()*可以返回*{'x': 1.0, 'y': 5.0}*而且升级为可以使用所有字典常用的函数。<br/>
+关于更多，请看[doc](https://docs.python.org/3/library/collections.html#collections.namedtuple)
+
+## 字典
+**1. 使用列表解析创建一个字典**<br/>
+python 2.6<br/>
+```python
+d = dict((key, value) for (key, value) in sequence)
+```
+python 2.7 or python 3.x, 使用[字典解析语法](http://www.python.org/dev/peps/pep-0274/)<br/>
+```python
+d = {key: value for (key, value) in sequence}
+```
+
+**2. 使用"in"还是"has_key()"**<br/>
+```python
+d = {'a':1, "b":2}
+'a' in d
+True
+or:
+d = {'a':1, 'b':2}
+d.has_key('a')
+True
+```
+in更pythonic, 另外has_key()在Python3.x中已经被移除.另外根据网上的一些测试，in的速度要优于has_key()。<br/>
+
+**4. 字典默认值**<br/>
+```python
+#获取时,如不存在，得到默认值
+d.get(key, 0)
+#设置时，若key不存在，设置默认值，已存在，返回已存在value
+d.setdefault(key, []).append(new_element)
+#初始即默认值
+from collections import defaultdict
+d = defaultdict(lambda: 0)
+#or d = defaultdict(int)
+```
+
+**5. 如何给字典添加一个值**<br/>
+```python
+#### Making a dictionary ####
+data = {}
+# or #
+data = dict()
+
+#### Initially adding values ####
+data = {'a':1, 'b':2, 'c':3}
+# or #
+data = dict(a=1, b=2, c=3)
+
+#### Inserting/Updating value ####
+data['a'] = 1 # updates if 'a' exists, else adds 'a'
+# OR #
+data.update({'a':1})
+# OR #
+data.update(dict(a=1))
+
+#### Merging 2 dictionaries ####
+data.update(data2)
+```
+
+**6. 如何将字段转换成一个object，然后使用对象-属性的方式读取**<br/>
+```python
+# 有dict
+>>> d = {'a': 1, 'b': {'c': 2}, 'd': ["hi", {'foo': "bar"}]}}
+# 想用这种方式访问
+>>> x = dict2obj(d)
+>>> x.a
+1
+>>> x.b.c
+2
+>>> x.d[1].foo
+bar
+```
+使用namedtuple:<br/>
+```python
+>>> from clooections import namedtuple
+>>> MyStruct = namedtuple('MyStruct', 'a b d')
+>>> s = MyStruct(a=1, b={'c':2}, d=['hi'])
+>>> s
+MyStruct(a=1, b={'c':2}, d=['hi'])
+>>> s.a
+1
+>>> s.c
+>>> s.d
+['hi']
+```
+使用类<br/>
+```python
+class Struct:
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
+
+>>> args = {'a':1, 'b':2}
+>>> s = Struct(**args)
+>>> s
+<__main__.Struct instance at 0x01D6A738>
+>>> s.a
+1
+>>> s.b
+2
+```
+
+**7. 如何在单一表达式中合并两个Python字典**<br/>
+```python
+#问题：
+>>> x = {'a':1, 'b': 2}
+>>> y = {'b':10, 'c': 11}
+>>> z = x.update(y)
+>>> print z
+None
+>>> x
+{'a': 1, 'b': 10, 'c': 11}
+#我想要最终合并结果在z中，不是x，我要怎么做？
+```
+这种情况下，可以使用<br/>
+```python
+z = dict(x.items() + y.items())
+```
+这个表达式将会实现你想要的，最终结果z，并且相同key的值，将会是y中key对应的值<br/>
+```python
+>>> x = {'a':1, 'b': 2}
+>>> y = {'b':10, 'c': 11}
+>>> z = dict(x.items() + y.items())
+>>> z
+{'a': 1, 'c': 11, 'b': 10}
+```
+如果在Python3中,会变得有些复杂<br/>
+```python
+>>> z = dict(list(x.items()) + list(y.items()))
+>>> z
+{'a': 1, 'c': 11, 'b': 10}
+```
+
+**8. 如何映射两个列表成为一个字典**<br/>
+```python
+#两个列表
+keys = ('name', 'age', 'food')
+values = ('Monty', 42, 'spam')
+#如何得到
+dict = {'name' : 'Monty', 'age' : 42, 'food' : 'spam'}
+```
+使用zip<br/>
+```python
+>>> keys = ['a', 'b', 'c']
+>>> values = [1, 2, 3]
+>>> d = dict(zip(keys, values))
+>>> print d
+{'a': 1, 'b': 2, 'c': 3}
+```
+
+**9. 排序一个列表中的所有dict，根据dict内值**<br/>
+```python
+#如何排序如下列表，根据name或age
+[{'name':'Homer', 'age':39}, {'name':'Bart', 'age':10}]
+```
+简单的做法；<br/>
+```python
+newlist = sorted(list1, key=lambda k:k['name'])
+```
+高效的做法：<br/>
+```python
+from operator import itemgetter
+newlist = sorted(list1, key=itemgetter('name'))
+```
+
+**10. 根据值排序一个字典**<br/>
+```python
+import operator
+x = {1:2, 3:4, 4:3, 2:1, 0:0}
+sorted_x = sorted(x.iteritems(), key=operator.itemgetter(1))
+#[(0, 0), (2, 1), (1, 2), (4, 3), (3, 4)]
+#dict(sorted_x) == x
+```
+
+**11. 如何将自定义对象作为字典键值**<br/>
+```python
+class MyThing:
+    def __init__(self, name, location, length):
+        self.name = name
+        self.location = location
+        self.length = length
+
+    def __hash__(self):
+        return hash((self.name, self.location))
+
+    def __eq__(self, other)
+        return (self.name, self.location) == (other.name, other.location)
+```
+

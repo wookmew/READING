@@ -21,6 +21,16 @@
 
 - [函数](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#函数)
 - [内置函数](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#内置函数)
+- [异常](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#异常)
+- [模块](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#模块)
+- [标准库](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#标准库)
+- [日期](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#日期)
+- [oop](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#oop)
+
+> 其他  
+
+- [pip/easy_install](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#pip/easy_install)
+- [其他](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md#其他)
 
 
 ##基本语法控制流相关
@@ -1626,3 +1636,410 @@ use_a_wrapper_to_simulate_pass_by_reference(wrapper)
 
 do_something_with(wrapper[0])
 ```
+
+## 内置函数
+**1. 如何flush Python的print输出**<br/>
+```python
+import sys
+sys.stdout.flush()
+```
+参考：[http://docs.python.org/reference/simple_stmts.html#the-print-statement](http://docs.python.org/reference/simple_stmts.html#the-print-statement)
+[http://docs.python.org/library/sys.html](http://docs.python.org/library/sys.html)
+[http://docs.python.org/library/stdtypes.html#file-objects](http://docs.python.org/library/stdtypes.html#file-objects)<br/>
+
+**2. Python如何检查一个对象是list或者tuple，但是不是一个字符串**<br/>
+原来的做法是<br/>
+```python
+assert isinstance(lst, (list, tuple))
+```
+有没有更好的做法<br/>
+我认为下面的方式是你需要的<br/>
+```python
+assert not isinstance(lst, basestring)
+```
+原来的方式，你可能会漏过很多像列表，但并非list/tuple的<br/>
+
+**3. Python中检查类型的权威方法**<br/>
+检查一个对象是否是给定类型或者对象是否继承于给定类型？<br/>
+比如给定一个对象o,如何判断是不是一个str<br/>
+检查是否是str<br/>
+```python
+type(o) is str
+```
+检查是否是str或者str的子类<br/>
+```python
+isinstance(o, str)
+```
+下面的方法在某些情况下有用<br/>
+```python
+issubclass(type(o), str)
+type(o) in ([str] + str.__subclass__()) 
+```
+注意，你或许想要的是<br/>
+```python
+isinstance(o, basestring)
+```
+因为unicode字符串可以满足判定(unicode 不是str的子类，但是str和unicode都是basestring的子类)可选的，isinstance可以接收多个类型参数，只要满足其中一个即True<br/>
+```python
+isinstance(o, (str, unicode))
+```
+
+**4. 你是否能解释Python中的闭包**<br/>
+参考文章：[Closure on closures](http://mrevelle.blogspot.com/2006/10/closure-on-closures.html)<br/>
+```python
+对象是数据和方法关联
+闭包是函数和数据关联
+```
+例如：<br/>
+```python
+def make_counter():
+    i = 0
+    def counter(): # counter() is a closure
+        nonlocal i
+        i += 1
+        return i
+    return counter
+
+c1 = make_counter()
+c2 = make_counter()
+
+print (c1(), c1(), c2(), c2())
+# -> 1 2 1 2
+```
+其他解释(感觉英文更精准)<br/>
+```python
+A function that references variables from a containing scope, potentially after flow-of-control has left that scope
+
+A function that can refer to environments that are no longer active.
+A closure allows you to bind variables into a function without passing them as parameters.
+```
+
+**5. Python Lambda - why?**<br/>
+Are you talking about lambda functions? Like<br/>
+```python
+f = lambda x: x**2 + 2*x - 5
+```
+非常有用, python支持函数式编程, 你可以将函数作为参数进行传递去做一些事情<br/>
+```python
+m = filter(lambda x: x % 3 == 0, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+# sets m to [3, 6, 9] 
+```
+这样相对于完整地函数更为简短<br/>
+```python
+def filterfunc(x):
+    return x % 3 == 0
+m = filter(filterfunc, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+当然, 这个例子你也可以使用列表解析进行处理<br/>
+```python
+def filterfunc(x):
+    return x % 3 == 0
+m = filter(filterfunc, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+当然, 这个例子你也可以使用列表解析进行处理<br/>
+```python
+m = [x for x in [1, 2, 3, 4, 5, 6, 7, 8, 9] if x % 3 == 0]
+```
+甚至是<br/>
+```python
+range(3, 10, 3)
+```
+lambda function may be the shortest way to write something out<br/>
+
+**6. Python中str和repr的区别**<br/>
+Alex总结的很好，但是，有点出乎意料的精简了。首先，让我重复一下Alex回答的重点：<br/>
+- 缺省实现是没用的（很难想象，但是的确是这样的）<br/>
+- **__repr__**的目的是清晰<br/>
+- **__str__**的目的是可读性<br/>
+- 容器的**__str__**使用已包含对象**__repr__**<br/>
+**缺省实现是没用的**<br/>
+这实在是奇怪，因为Python的缺省实现是为了完全的可用。然而，在这种情况下，使用缺省的**__repr__**会表现的像这样：<br/>
+```python
+return "%s(%r)" % (self.__class__, self.__dict__)
+```
+这很危险（举个例子。如果对象被引用，太容易陷入无限循环）。所以，Python选择逃避。注意有一个缺省是正确的：如果**__repr__**已经定义，而**__str__**没有，对象会表现出**__str__=__repr__**。<br/>
+这意味着，简单讲：几乎所有你实现的对象都应该有一个**__repr__**函数用来理解这个对象。实现**__str__**是一个选择：如果你需要一个"良好的打印”函数（举个例子，用来表现一个生成器）<br/>
+**__repr__的目标是清晰的**<br/>
+让我实话实说-我并不相信调试器。我不知道如何使用任何一种调试器，而且没有认真使用过任何一款。我觉的调试器的最大错误是它们的本质--我调试错误发生在很久很久以前，超级久远。这意味着我有着宗教热情一般的相信日志。日志是一切一劳永逸的服务器系统的生命之血。Python可以轻松的记录日志：可能某些项目有特殊的包装，但是你需要的仅仅是一句：<br/>
+```python
+(INFO, "I am in the weird function and a is", a, "and b is", b, "but I got a null C — using default", default_c)
+```
+但是你需要做最后一步，所有你实现的对象有一个有效的repr，所以上面这种代码才会工作。这就是为什么"eval"这种东西出现：如果你又足够的信息可以让**eval(repr(c)) == c**，这意味着你知道所有的东西，像知道**c**一样。如果它足够简单，至少通过模糊的方法，实现它。如果不是这样的，请无论如何了解c的足够信息。我通常使用一个类eval的格式：**"My class(this=%r, that=%r)" % (self.this, self.that)"**。这不意味着你可以真正的结构化MyClass或者他们全都是正确的结构器参数。但是他们是很有用的形式代表“这个实例中你需要了解的信息就是这些”。<br/>
+注意：我用的是**%r**而不是**%s**。你总是想用**repr()**[或者**%r**格式等效的角色]在一个可实现的**__repr__**中，或者你被repr的目的打败的。你需要知道**MyClass(3)**和**Myclass("3")**的区别。<br/>
+**__str__的目标是可读性**<br/>
+实际上，它不是为了更清晰--注意**str(3) == str("3")**。同样的，如果你实现了一个IP的抽象，有一个字符串看上去像192.168.1.1是Ok的。当实现一个日期或时间的抽象时，字符串可以是“2014/4/12 15:35:33"等等。所以它的目标是通过一种方式让用户，而不是一个程序员，可以正常的阅读它。去掉那些无用的字码，假装成其他的类--在它支持可读性之后，这是一种进化。<br/>
+容器的**__str__**使用已包含对象**__repr__**<br/>
+这看上去很奇怪，是不是？确实有一点，但是可读性是这样吗？：<br/>
+```python
+[moshe is, 3, hello world, this is a list, oh I don't know, containing just 4 elements]
+```
+不一定。尤其是，容器内部的字符串会找到一个很容易实现的方式去构建它们所代表的东西。面对这种含糊不清的东西，记住，Python禁止猜测。如果你打印一个列表，想要上述的表现形式时，只需要<br/>
+```python
+print "["+", ".join(l)+"]"
+```
+**总结**<br/>
+为你所有实现的类，实现**__repr__**。这应该是第二特性。实现**__str__**，对于那些你认为使用可视化字符串会更好的表现出错误的可读性，并阻止含糊不清的东西。<br/>
+
+## 异常
+**1. Python中声明exception的方法**<br/>
+在python2.6中定义异常得到警告<br/>
+```python
+>>> class MyError(Exception):
+...     def __init__(self, message):
+...         self.message = message
+
+>>> MyError("foo")
+_sandbox.py:3: DeprecationWarning: BaseException.message has been deprecated as of Python 2.6
+```
+问题很长，大意如标题<br/>
+回答，或许我理解错了，但是为什么不这样做<br/>
+```python
+class MyException(Exception):
+    pass
+```
+如果要重写什么，例如传递额外参数，可以这么做<br/>
+```python
+class ValidationError(Exception):
+    def __init__(self, message, Errors):
+        # Call the base class constructor with the parameters it needs
+        Exception.__init__(self, message)
+
+        # Now for your custom code...
+        self.Errors = Errors
+```
+你可以通过第二个参数传递error 字典, 之后通过e.Errors获取<br/>
+
+**2. 如何人为地抛出一个异常**<br/>
+```python
+# pythonic
+raise Exception("I know python!")
+```
+更多可参考[文档](http://docs.python.org/2/reference/simple_stmts.html#the-raise-statement)
+
+**3. 如何一行内处理多个异常**<br/>
+我知道可以这么做<br/>
+```python
+try:
+    # do something that may fail
+except:
+    # do this if ANYTHING goes wrong
+```
+也可以<br/>
+```python
+try:
+    # do something that may fail
+except IDontLikeYourFaceException:
+    # put on makeup or smile
+except YouAreTooShortException:
+    # stand on a ladder
+```
+如果想在一行里处理多个异常的话<br/>
+```python
+try:
+    # do something that may fail
+except IDontLIkeYouException, YouAreBeingMeanException: #没生效
+except Exception, e: #捕获了所有
+    # say please
+```
+答案：<br/>
+```python
+# as在python2.6,python2.7中仍然可以使用
+except (IDontLIkeYouException, YouAreBeingMeanException) as e:
+    pass
+```
+
+**4. Python assert最佳实践**<br/>
+回答1<br/>
+Assert仅用在，测试那些从不发生的情况！目的是让程序尽早失败<br/>
+Exception用在，那些可以明确知道会发生的错误，并且建议总是创建自己的异常类<br/>
+例如，你写一个函数从配置文件中读取配置放入字典，文件格式不正确抛出一个ConfigurationSyntaxError,同时你可以assert返回值非None<br/>
+在你的例子中，如果x是通过用户接口或外部传递设置的，最好使用exception<br/>
+如果x仅是同一个程序的内部代码，使用assert<br/>
+回答2<br/>
+这个函数是为了能够当x小于0的时候，原子性的抛出一个异常。你可以使用[class descriptors](https://docs.python.org/2/reference/datamodel.html#implementing-descriptors)有一个例子：<br/>
+```python
+class ZeroException(Exception):
+    pass
+
+class variable(object):
+    def __init__(self, value=0):
+        self.__x = value
+
+    def __set__(self, obj, value):
+        if value < 0:
+            raise ZeroException('x is less than zero')
+
+        self.__x = value
+
+    def __get__(self, obj, objType):
+        return self.__x
+
+class MyClass(object):
+    x = variable
+
+>>> m = MyClass()
+>>> m.x = 10
+>>> m.x -= 20
+Traceback (most recent call last):
+   File "<stdin>", line 1, in <module>
+   File "my.py", line 7, in __set__
+      raise ZeroException('x is less than zero')
+ZeroException: x is less than zero
+```
+
+**5. 如何打印到stderr**<br/>
+经常这么干<br/>
+```python
+import sys
+sys.stderr.write('spam\n')
+
+from __futrue__ import print_function
+print('spam', file=sys.stderr) 
+```
+但是不够pythonic, 有没有更好的方法?<br/>
+回答, 我发现这种方式是最短/灵活/可扩展/可读的做法<br/>
+```python
+from __futrue__ import print_function
+def warning(*objs):
+    print("WARNING: ", *objs, file=sys.stderr)
+```
+
+##模块
+**1. __init__.py是做什么用的**<br/>
+这是包的一部分，[具体文档](http://docs.python.org/2/tutorial/modules.html#packages)<br/>
+__init__.py让Python把目录当成包，最简单的例子，__init__.py仅是一个空文件，但它可以一样执行包初始化代码或者设置__all__变量，后续说明<br/>
+
+**2. 如何使用绝对路径import一个模块**<br/>
+```python
+import imp
+
+foo = imp.load_source('module.name', '/path/to/file.py')
+foo.MyClass() 
+```
+
+**2. 获取Python模块文件的路径**<br/>
+如何才能获取一个模块其所在的路径:<br/>
+```python
+# 回答
+import a_module
+print a_module.__file__
+```
+获取其所在目录，可以<br/>
+```python
+import os
+path = os.path.dirname(amodule.__file__)
+```
+
+**3. 谁可以解释一下all么？**<br/>
+该模块的公有对象列表, **all**指定了使用import module时，哪些对象会被import进来.其他不在列表里的不会被导入.<br/>
+```python
+__all__ = ["foo", "bar"]
+```
+it's a list of public objects of that module -- it overrides the default of hiding everything that begins with an underscore<br/>
+
+**4. 如何重新加载一个python模块**<br/>
+使用reload内置函数<br/>
+```python
+reload(module_name)
+import foo
+while True:
+    # Do some things.
+    if is_change(foo):
+        foo = reload(foo)
+```
+
+**5. 在Python中，如何表示Enum(枚举)**<br/>
+Enums已经添加进了Python 3.4，详见PEP435。同时在pypi下被反向移植进了3.3，3.2，3.1，2.7，2.6，2.5和2.4。<br/>
+通过**$ pip install enum34**来使用向下兼容的Enum，下载**enum**（没有数字）则会安装完全不同并且有冲突的版本。<br/>
+```python
+from enum import Enum
+Animal = Enum('Animal', 'ant bee cat dog')
+```
+等效的：<br/>
+```python
+class Animals(Enum):
+    ant = 1
+    bee = 2
+    cat = 3
+    dog = 4
+```
+在早期的版本中，实现枚举的一种方法是：<br/>
+```python
+def enum(**enums):
+    return type('Enum', (), enums)
+```
+使用起来像这样：<br/>
+```python
+>>> Numbers = enum(ONE=1, TWO=2, THREE='three')
+>>> Numbers.ONE
+1
+>>> Numbers.TWO
+2
+>>> Numbers.THREE
+'three'
+```
+也可以轻松的实现自动列举像下面这样：<br/>
+```python
+def enum(*sequential, **named):
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    return type('Enum', (), enums)
+```
+使用起来像这样：<br/>
+```python
+>>> Numbers = enum('ZERO', 'ONE', 'TWO')
+>>> Numbers.ZERO
+0
+>>> Numbers.ONE
+1
+```
+支持把值转换为名字，可以这样添加：<br/>
+```python
+def enum(*sequential, **named):
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    reverse = dict((value, key) for key, value in enums.iteritems())
+    enums['reverse_mapping'] = reverse
+    return type('Enum', (), enums)
+```
+这将会根据名字重写任何东西，但是对于渲染你打印出的枚举值很有效。如果反向映射不存在，它会抛出KeyError。看一个例子：<br/>
+```python
+>>> Numbers.reverse_mapping[‘three’]
+’THREE’
+```
+
+**6. if name == “main”做了什么？**<br/>
+稍微拓展一下Harley的答案...<br/>
+当Python的解释器读一个源文件时，它执行了里面能找到的所有代码。在执行之前，它会定义少数几个变量。举个例子，如果Python解释器把该模块（即源文件）当做主程序运行，它就会把特殊的__name__变量的值设置为“__main__”。如果这个文件被其他模块引用，__name__就会被设置为其他模块的名字。<br/>
+就你的脚本来说，我们假设把它当做主函数来执行，你可能会在命令行上这样用：<br/>
+```python
+python threading_example.py
+```
+设置好特殊变量之后，它会执行import声明并加载其他的模块。然后它会预估def的缩进，创建一个函数对象和一个指向函数对象的值叫做myfunction。之后它将读取if语句，确定__name__等于”__main__”后，执行缩进并展示。<br/>
+这样做的主要原因是，有时候你写了一个可以直接执行的模块（一个.py文件），同时，它也可以被其他模块引用。通过执行主函数检查，你可以让你的代码只在作为主程序时执行，而在被其他模块引用或调用其中的函数时不执行。<br/>
+[doc](http://ibiblio.org/g2swap/byteofpython/read/module-name.html)可以看到更多的细节。<br/>
+
+**7. 通过相对路径引用一个模块**<br/>
+假设你的两个文件夹都是真实的python包（都有__init__.py文件在里面），这里有一个可以安全的把相对路径模块包含进本地的脚本。<br/>
+我假设你想这样做，因为你需要在脚本中包含一系列的模块。我在许多产品的生产环境和不同的情景下用过这个：调用其他文件夹下的脚本或者在不打开一个新的解释器的情况下在Python中执行。<br/>
+```python
+import os, sys, inspect
+# realpath() will make your script run, even if you symlink it :)
+cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
+if cmd_folder not in sys.path:
+    sys.path.insert(0, cmd_folder)
+
+# use this if you want to include modules from a subfolder
+cmd_subfolder=os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"subfolder")))
+if cmd_subfolder not in sys.path:
+    sys.path.insert(0, cmd_subfolder)
+
+# Info:
+# cmd_folder = os.path.dirname(os.path.abspath(__file__)) # DO NOT USE__file__ !!!
+# __file__ fails if script is called in different ways on Windows
+# __file__ fails if someone does os.chdir() before
+# sys.argv[0] also fails because it doesn't not always contains the path
+```
+通过这个途径，确实迫使Python使用你的模块，而不用系统自带的那些。<br/>
+但是注意。在**egg**文件中的模块会发生什么我确实不知道。可能会失败。如果你知道更好的解决办法请留言，我会花几个小时去改进它。<br/>
+
+**8. Python中如何进行间接引用**<br/>
+[问题](http://stackoverflow.com/questions/72852/how-to-do-relative-imports-in-python)

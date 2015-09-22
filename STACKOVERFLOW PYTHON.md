@@ -2321,3 +2321,404 @@ except TypeError:
 PEP明确了抽象基类可以代替鸭子类型，而且实现起来没什么压力（看[这里](https://www.python.org/dev/peps/pep-3119/#abcs-vs-duck-typing)）。最新版本的Python中实现的抽象基类提供了额外的更吸引人的东西：**isinstance**（和**issubclass**)现在不仅仅是一个子类的实例（特别是所有的类都可以注册成为抽象基类并展示为某个子类，它可以实例化抽象基类的实例），抽象基类还为具体的子类提供了更多的便利-自然的通过模板方法来设计模仿应用。（看[这里](http://en.wikipedia.org/wiki/Template_method_pattern)和[这里](http://www.catonmat.net/blog/learning-python-design-patterns-through-video-lectures/)（第三部分）了解Python中特殊不特殊的更多TM DP，以及抽象基类的支持）。<br/>
 对于那些Python 2.6中潜在的关于抽象基类的技巧，看[这里](https://docs.python.org/2/library/abc.html)，对于3.1版本，同样，看[这里](https://docs.python.org/3.1/library/abc.html)。两种版本的基本库模块[collections](https://docs.python.org/3.1/library/collections.html#module-collections)（这是3.1版本，几乎一样的2.6版本，看[这里](https://docs.python.org/2/library/collections.html#module-collections)）都提供了多种有用的抽象基类。<br/>
 这个答案的目的是，抽象基类保留的那些关键东西（我们可以超过论证横向比较TM DP的功能性，和Python传统的mixin类，比如[UserDict.DictMixin](https://docs.python.org/2/library/userdict.html#UserDict.DictMixin)）是他们让**isinstance**(和**issubclass**)比之前（Python2.5及之前）更有魅力且无处不在（在Python2.6以及更新的版本中）。因此，相比之下，在Python中检查类型相等更恶心了，比之前的版本还糟糕。<br/>
+
+##日期
+**1. 如何将一个Python time.struct_time对象转换为一个datetime对象**<br/>
+使用 time.mktime() 将time元组(本地时间)转成秒， 然后使用 datetime.fromtimestamp() 转成datetime对象<br/>
+```python
+from time import mktime
+from datetime import datetime
+dt = datetime.fromtimestamp(mktime(struct))
+```
+
+**2. python中如何获取当前时间**<br/>
+时间日期<br/>
+```python
+>>> import datetime
+>>> datetime.datetime.now()
+datetime(2009, 1, 6, 15, 8, 24, 78915)
+```
+如果仅获得时间<br/>
+```python
+>>> datetime.datetime.time(datetime.datetime.now())
+datetime.time(15, 8, 24, 78915))
+#等价
+>>> datetime.datetime.now().time()
+```
+可以从文档中获取更多[文档](http://docs.python.org/2/library/datetime.html),如果想避免额外的datetime.<br/>
+```python
+>>> from datetime import datetime
+```
+
+**3. Python - time.clock() vs. time.time() - 更精确?*<br/>
+哪一个更适合于计时? 哪个更精确:<br/>
+```python
+start = time.clock()
+... do something
+el = (time.clock() - start)
+
+and
+
+start = time.time()
+... do something
+el = (time.time() - start)
+```
+区别<br/>
+```python
+clock() -> floating point number
+
+Return the CPU time or real time since the start of the process or since
+the first call to clock().
+This has as much precision as the system records.
+
+time() -> floating point number
+
+Return the current time in seconds since the Epoch.
+Fractions of a second may be present if the system clock provides them.
+```
+根据[time module doc](http://docs.python.org/lib/module-time.html)<br/>
+```python
+clock()
+
+On Unix, return the current processor time as a floating point number expressed in seconds. The precision, and in fact the very definition of the meaning of ``processor time'', depends on that of the C function of the same name,
+
+but in any case, this is the function to use for benchmarking Python or timing algorithms.
+```
+简而言之, time.clock()更精确些, 但是如果涉及cpu外的硬件时间统计(e.g. gpu), 只能使用time.time().另外基于性能的评估, 可以去看下timeit模块<br/>
+
+**4. python和javascript中josn的datetime**<br/>
+怎样从python->javascript传递json的datetime?<br/>
+可以**json.dumps**中加入**default**参数<br/>
+```python
+>>> dthandler = lambda obj: (
+...     obj.isoformat()
+...     if isinstance(obj, datetime.datetime)
+...     or isinstance(obj, datetime.date)
+...     else None)
+>>> json.dumps(datetime.datetime.now(), default=dthandler)
+'"2010-04-20T20:08:21.634121"'
+```
+一个更好理解的handler<br/>
+```python
+def handler(obj):
+    if hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    else isinstance(obk, ...):
+        return ...
+    else:
+        raise TypeError, 'Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj))
+```
+但是上面这种做法, 对于json中包含其他的类型, 会返回None<br/>
+```python
+import json
+import datetime
+class DateTimeJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        else:
+            return super(DateTimeJSONEncoder, self).default(obj)
+
+>>> DateTimeJSONEncoder().encode([datetime.datetime.now()])
+'["2010-06-15T14:42:28"]'
+```
+
+## oop
+**1. Python 'self' 解释**<br/>
+使用self关键字的原因是，Python没有@语法用于引用实例属性.Python决定用一种方式声明方法:实例对象自动传递给属于它的方法,但不是接收自动化：方法的第一个参数是调用这个方法的实例对象本身.这使得方法整个同函数一致,并且由你自己决定真实的名（虽然self是约定，但当你使用其他名的时候，通常人们并不乐意接受）.self对于代码不是特殊的，只是另一个对象.<br/>
+Python本来可以做一些用来区分真实的名字和属性的区别 —— 像Ruby有的特殊语法，或者像C++/Java的命令声明,或者其他可能的的语法 —— 但是Python没有这么做.Python致力于使事情变得明确简单，让事情是其本身，虽然并不是全部地方都这么做，但是实例属性是这么做的！这就是为什么给一个实例属性赋值时需要知道是给哪个实例赋值,并且，这就是为什么需要self:<br/>
+```python
+class Vector(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    def length(self):
+        return math.sqrt(self.x ** 2 + self.y ** 2)
+#等价于
+def length_global(vector):
+    return math.sqrt(vector.x ** 2 + vector.y ** 2)
+```
+另外<br/>
+```python
+v_instance.length()
+转为
+Vector.length(v_instance)
+```
+
+**2. 为什么Python的'private'方法并不是真正的私有方法**<br/>
+Python允许我们创建'private' 函数：变量以两个下划线开头，像这样： __myPrivateMethod(). 但是，如何解释：<br/>
+```python
+>>> class MyClass:
+...     def myPublicMethod(self):
+...             print 'public method'
+...     def __myPrivateMethod(self):
+...             print 'this is private!!'
+...
+>>> obj = MyClass()
+>>> obj.myPublicMethod()
+public method
+>>> obj.__myPrivateMethod()
+Traceback (most recent call last):
+File "", line 1, in
+AttributeError: MyClass instance has no attribute '__myPrivateMethod'
+>>> dir(obj)
+['_MyClass__myPrivateMethod', '__doc__', '__module__', 'myPublicMethod']
+>>> obj._MyClass__myPrivateMethod()
+this is private!!
+```
+dir(obj) 和 obj._MyClass__myPrivateMethod()<br/>
+回答:‘private'只是用作，确保子类不会意外覆写父类的私有方法和属性.不是为了保护外部意外访问而设计的！<br/>
+```python
+>>> class Foo(object):
+...     def __init__(self):
+...         self.__baz = 42
+...     def foo(self):
+...         print self.__baz
+...
+>>> class Bar(Foo):
+...     def __init__(self):
+...         super(Bar, self).__init__()
+...         self.__baz = 21
+...     def bar(self):
+...         print self.__baz
+...
+>>> x = Bar()
+>>> x.foo()
+42
+>>> x.bar()
+21
+>>> print x.__dict__
+{'_Bar__baz': 21, '_Foo__baz': 42}
+```
+当然，这对于两个同名的类没有作用.另外，可以查看diveintopython的解释[入口](http://www.faqs.org/docs/diveintopython/fileinfo_private.html#d0e11521)<br/>
+
+**3. Python中类方法的作用是什么**
+我现在意识到，我不需要像我在使用java的static方法那样使用类方法，但是我不确定什么时候使用<br/>
+谁能通过一个好的例子解释下Python中的类方法，至少有人能告诉我什么时候确实需要使用类方法<br/>
+类方法用在：当你需要使用不属于任何明确实例的方法,但同时必须涉及类.<br/>有趣的是，你可以在子类中覆写，这在Java的static方法和Python的模块级别函数中是不可能做到的
+如果你有一个MyClass, 并且一个模块级别函数操作MyClass(工厂，依赖注入桩等等), 声明一个类方法.然后这个类方法可以在子类中调用<br/>
+
+**4. Python中 new 和 init的用法**<br/>
+使用**new**,当你需要控制一个实例的生成<br/>
+使用**init**,当你需要控制一个实例的初始化<br/>
+**new**是实例创建的第一步.最先被调用，并且负责返回类的一个新实例.<br/>
+相反的,**init**不返回任何东西，只是负责在实例创建后进行初始化<br/>
+通常情况下，你不必重写**new**除非你写一个子类继承不可变类型，例如str,int,unicode或tuple<br/>
+你必须了解到，你尝试去做的用[Factory](http://en.wikipedia.org/wiki/Factory_object)可以很好地解决，并且是最好的解决方式.使用**new**不是一个简洁的处理方式,一个[factory例子](http://code.activestate.com/recipes/86900/)
+
+**5. 如何获取一个实例的类名**<br/>
+```python
+x.__class__.__name__
+```
+
+**6. @staticmethod和@classmethod的区别**<br/>
+staticmethod，静态方法在调用时，对类及实例一无所知.
+仅仅是获取传递过来的参数，没有隐含的第一个参数，在Python里基本上用处不大，你完全可以用一个模块函数替换它<br/>
+classmethod, 在调用时，将会获取到其所在的类，或者类实例，作为其第一个参数.当你想将函数作为一个类工厂时，这非常有用: 第一个参数是类，你可以实例化出对应实例对象，甚至子类对象。<br/>
+可以观察下 dict.fromkey(),是一个类方法，当子类调用时，返回子类的实例<br/>
+```python
+>>> class DictSubclass(dict):
+...     def __repr__(self):
+...         return "DictSubclass"
+...
+>>> dict.fromkeys("abc")
+{'a': None, 'c': None, 'b': None}
+>>> DictSubclass.fromkeys("abc")
+DictSubclass
+>>>
+```
+
+**7. 如何定义静态方法(static method)**<br/>
+使用[staticmethod](http://docs.python.org/2/library/functions.html#staticmethod)装饰器<br/>
+```python
+class MyClass(object):
+    @staticmethod
+    def the_static_method(x):
+        print x
+MyClass.the_static_method(2) # outputs 2
+```
+
+**8. Python中的类变量(环境变量)**<br/>
+在类中定义的变量，不在方法定义中，成为类变量或静态变量<br/>
+```python
+>>> class MyClass:
+...     i = 3
+...
+>>> MyClass.i
+3
+```
+i是类级别的变量，但这里要和实例级别的变量i区分开<br/>
+```python
+>>> m = MyClass()
+>>> m.i = 4
+>>> MyClass.i, m.i
+>>> (3, 4)
+```
+这和C++/java完全不同，但和C#区别不大，C#不允许类实例获取静态变量<br/>
+具体见[what the Python tutorial has to say on the subject of classes and class objects](http://docs.python.org/2/tutorial/classes.html#SECTION0011320000000000000000)<br/>
+另外，静态方法<br/>
+```python
+class C:
+    @staticmethod
+    def f(arg1, arg2, ...): ...
+```
+
+**9. 如何判断一个对象是否拥有某个属性**<br/>
+```python
+if hasattr(a, 'property'):
+    a.property
+```
+两种风格<br/>
+- EAFP(easier to ask for forgiveness than permission)<br/>
+- LBYL(look before you leap)<br/>
+相关内容 <br/>
+- [EAFP vs LBYL (was Re: A little disappointed so far)](http://web.archive.org/web/20070929122422/http://mail.python.org/pipermail/python-list/2003-May/205182.html)<br/>
+- [EAFP vs. LBYL @Code Like a Pythonista: Idiomatic](http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#eafp-vs-lbyl)<br/>
+- [python](http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#eafp-vs-lbyl)<br/>
+```python
+try:
+    doStuff(a.property)
+except AttributeError:
+    otherStuff()
+or
+
+if hasattr(a, 'property'):
+    doStuff(a.property)
+else:
+    otherStuff()
+```
+
+**10. Python中有没有简单优雅的方式定义单例类**<br/>
+我不认为有必要，一个拥有函数的模块（不是类）可以作为很好的单例使用，它的所有变量被绑定到这个模块，无论如何都不能被重复实例化<br/>
+如果你确实想用一个类来实现，在python中不能创建私有类或私有构造函数,所以你不能隔离多个实例而仅仅通过自己的API来访问属性<br/>
+我还是认为将函数放入模块，并将其作为一个单例来使用是最好的办法<br/>
+
+**11. 理解Python的Super()和init方法**<br/>
+尝试着去理解super().从表面上看，两个子类都能正常创建.我只是好奇他们两者之间的不同点<br/>
+```python
+class Base(object):
+    def __init__(self):
+        print "Base created"
+
+class ChildA(Base):
+    def __init__(self):
+        Base.__init__(self)
+
+class ChildB(Base):
+    def __init__(self):
+        super(ChildB, self).__init__()
+
+print ChildA(),ChildB()
+```
+回答:<br/>
+Super让你避免明确地引用基类，这是一点。最大的优势是，当出现多重继承的时候，各种[有趣的情况](http://www.artima.com/weblogs/viewpost.jsp?thread=236275)就会出现。查看super[官方文档](http://docs.python.org/library/functions.html#super).<br/>
+另外注意，在Python3.0中，可以使用super().init() 代替 super(ChildB, self).init().IMO略有优势.<br/>
+
+**12. 在Python中，如何判断一个对象iterable?**<br/>
+1. 检查**iter**对序列类型有效，但是对例如string，无效<br/>
+```python
+try:
+    iterator = iter(theElement)
+except TypeError:
+    # not iterable
+else:
+    # iterable
+
+# for obj in iterator:
+#     pass
+```
+2. 使用collections<br/>
+```python
+import collections
+
+if isinstance(e, collections.Iterable):
+    # e is iterable
+```
+
+**13. 构建一个基本的Python迭代器**<br/>
+在Python中，迭代器对象遵循迭代器协议，这意味着它提供了两种方法:**__iter__()**和**next()**。**__iter__()**返回一个迭代器对象并且在循环开始时就隐式的被调用。**next()**方法返回下一个值，并在循环的每一次增量中被调用。当没有值需要返回时，**next()**引发一个StopIteration异常，这个异常被循环结构隐式的捕获从而停止迭代。<br/>
+这有一个简单计数例子：<br/>
+```python
+class Counter:
+    def __init__(self, low, high):
+        self.current = low
+        self.high = high
+
+    def __iter__(self):
+        return self
+
+    def next(self): # Python 3: def __next__(self)
+        if self.current > self.high:
+            raise StopIteration
+        else:
+            self.current += 1
+            return self.current - 1
+for c in Counter(3, 8):
+    print c
+#上述会打印出：
+3
+4
+5
+6
+7
+8
+```
+这个用生成器写会更简单一些，下面是之前答案的翻写：<br/>
+```python
+def counter(low, high):
+    current = low
+    while current <= high:
+        yield current
+        current += 1
+for c in Counter(3, 8):
+    print c
+```
+打印出来的内容是一样的。在后台，生成器对象支持迭代器协议，大体上对Counter类做一些同样事情。<br/>
+[Iterators and Simple Generators](http://www.ibm.com/developerworks/library/l-pycon.html)，David Mertz的这篇文章，是一篇对迭代器非常好的介绍。<br/>
+
+**14. 在Python中，抽象类和接口有什么区别？**<br/>
+看看下面这个：<br/>
+```python
+class Abstract1(object):
+    """Some description that tells you it's abstract,
+    often listing the methods you're expected to supply."""
+    def aMethod(self):
+        raise NotImplementedError( "Should have implemented this" )
+```
+因为在Python中没有（也不需要）一个正式的接口协议，类Java的抽象类和接口的区别并不存在。如果有人尝试定义一个正式的接口，它其实也是一个抽象类。唯一的不同就是在文档注释的表述。<br/>
+并且当你使用鸭子类型时，抽象类和接口的区别有点吹毛求疵了。<br/>
+Java使用接口是因为它没有多重继承。<br/>
+因为Python有多重继承，你可能还会看到类似这样的东西：<br/>
+```python
+class SomeAbstraction( object ):
+    pass # lots of stuff - but missing something
+
+class Mixin1( object ):
+    def something( self ):
+        pass # one implementation
+
+class Mixin2( object ):
+    def something( self ):
+        pass # another
+
+class Concrete1( SomeAbstraction, Mixin1 ):
+    pass
+
+class Concrete2( SomeAbstraction, Mixin2 ):
+    pass
+```
+这是一种使用混合抽象超类去创建不相交的具体子类的方法。<br/>
+
+**15. Python 的slots**<br/>
+**__slots__**的正确使用方法是保存对象的空间。取代使用允许任何时间给类添加属性的动态字典，有一种在创建之后不允许添加的静态结构。使用slots节省了给所有对象同一个字典的系统开销。有时候这是一个很有效的优化，但它也会变得毫无用处，前提是Python的解释器足够动态化，可以在确实需要为对象增加某些东西时只需要字典。<br/>
+不幸的是，使用slots有一个副作用。他们通过一种方法改变了那些带有slots的对象的表现形式，使它们被古怪的控制者和细小的静态归类滥用。这很糟糕，因为古怪的控制者应该滥用元类，而细小的静态归类应该滥用生成器。但是从Python开始，只有这一种显著的方法了。<br/>
+将CPython做的很聪明，聪明到可以不用**__slots__**保存空间，是一个主要的工作，这也就是为什么它不在P3k的更改列表中（到目前为止）。<br/>
+
+**16. Python中，新式类和旧式类的区别**<br/>
+根据[https://docs.python.org/2/reference/datamodel.html#new-style-and-classic-classes](https://docs.python.org/2/reference/datamodel.html#new-style-and-classic-classes)<br/>
+
+**17. Python中，@property和getters and setters哪一个更好**<br/>
+用属性更好，这也是他们存在的原因。<br/>
+原因是在Python中，所有属性都是公共的。名字由单下划线或双下划线开始的，只不过是一个警告，表示这个属性的值在只是一个执行细节，在未来的版本中可能不会保持一致。他并没有阻止你去获取或者设置这个属性。因此，标准的属性访问途径便是是公认最好的，Pythonic的。<br/>
+属性的优点是他们和访问属性的语法上保持一致，所以你可以在不改变客户端的情况下把属性从一个改变成另一个值。你甚至可以有一个不再生产环境版本的类用来保存属性，不用改变代码就可以使用它们（用来debug或者上下文代码）。同时，你不需要为所有东西写获取和设置因为在之后你可能需要更好的控制。<br/>
+

@@ -2722,3 +2722,782 @@ class Concrete2( SomeAbstraction, Mixin2 ):
 原因是在Python中，所有属性都是公共的。名字由单下划线或双下划线开始的，只不过是一个警告，表示这个属性的值在只是一个执行细节，在未来的版本中可能不会保持一致。他并没有阻止你去获取或者设置这个属性。因此，标准的属性访问途径便是是公认最好的，Pythonic的。<br/>
 属性的优点是他们和访问属性的语法上保持一致，所以你可以在不改变客户端的情况下把属性从一个改变成另一个值。你甚至可以有一个不再生产环境版本的类用来保存属性，不用改变代码就可以使用它们（用来debug或者上下文代码）。同时，你不需要为所有东西写获取和设置因为在之后你可能需要更好的控制。<br/>
 
+**18. 在Python中，链式调用父类构造器**<br/>
+```python
+class A(object):
+    def __init__(self):
+        print "Constructor A was called"
+
+class B(A):
+    def __init__(self):
+        super(B,self).__init__()
+        print "Constructor B was called"
+
+class C(B):
+    def __init__(self):
+        super(C,self).__init__()
+        print "Constructor C was called"
+
+c = C()
+```
+你正在做的事情，确实是值得推荐的（对于Python 2.x来说）.<br/>
+是否把类明确的传递给**super**是一个风格而不是功能上的问题。把类明确的传递给**super**符合Python哲学的“明了胜于晦涩”。<br/>
+
+**19. Python中，一个对象前面带单下划线和双下划线的含义**<br/>
+单下划线: 在一个类中，单下划线开头的单纯为了告诉其他程序员，这些属性或者方法意味着私有的。然而，这些属性或者方法本身并没什么特别的。引述[PEP-8](http://www.python.org/dev/peps/pep-0008/):<br/>
+```python
+_single_leading_underscore: weak "internal use" indicator. E.g. from M import * does not import objects whose name starts with an underscore.
+```
+双下划线,来自[Python文档](http://docs.python.org/tutorial/classes.html#private-variables-and-class-local-references)：<br/>
+```python
+Any identifier of the form __spam (at least two leading underscores, at most one trailing underscore) is textually replaced with _classname__spam, where classname is the current class name with leading underscore(s) stripped. This mangling is done without regard to the syntactic position of the identifier, so it can be used to define class-private instance and class variables, methods, variables stored in globals, and even variables stored in instances. private to this class on instances of other classes.
+```
+同一页还有一个警告：<br/>
+```python
+Name mangling is intended to give classes an easy way to define “private” instance variables and methods, without having to worry about instance variables defined by derived classes, or mucking with instance variables by code outside the class. Note that the mangling rules are designed mostly to avoid accidents; it still is possible for a determined soul to access or modify a variable that is considered private.
+```
+举例：<br/>
+```python
+>>> class MyClass():
+...     def __init__(self):
+...             self.__superprivate = "Hello"
+...             self._semiprivate = ", world!"
+...
+>>> mc = MyClass()
+>>> print mc.__superprivate
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: myClass instance has no attribute '__superprivate'
+>>> print mc._semiprivate
+, world!
+>>> print mc.__dict__
+{'_MyClass__superprivate': 'Hello', '_semiprivate': ', world!'}
+```
+
+**20. 在一个已存在的对象里，加一个方法**<br/>
+在Python中，函数和约束方法还是有一些区别。<br/>
+```python
+>> def foo():
+...     print "foo"
+...
+>>> class A:
+...     def bar( self ):
+...         print "bar"
+...
+>>> a = A()
+>>> foo
+<function foo at 0x00A98D70>
+>>> a.bar
+<bound method A.bar of <__main__.A instance at 0x00A9BC88>>
+>>>
+```
+约束方法被约束到一个实例上，当方法调用时这个实例会被当做第一个参数传入。<br/>
+在类（与实例相反）中，那些作为属性的可调用者仍然能是有限制的，尽管，你可以随时修改这个类的定义。<br/>
+```python
+>>> def fooFighters( self ):
+...     print "fooFighters"
+...
+>>> A.fooFighters = fooFighters
+>>> a2 = A()
+>>> a2.fooFighters
+<bound method A.fooFighters of <__main__.A instance at 0x00A9BEB8>>
+>>> a2.fooFighters()
+fooFighters
+```
+这样之前定义的实例也回随着更新（只要他们没有重写这个属性）：<br/>
+```python
+>>> a.fooFighters()
+fooFighters
+```
+问题出现在当你想把一个方法固定在某一个实例时：<br/>
+```python
+>>> def barFighters( self ):
+...     print "barFighters"
+...
+>>> a.barFighters = barFighters
+>>> a.barFighters()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: barFighters() takes exactly 1 argument (0 given)
+```
+当你想直接固定到一个实例上时，函数不是自动约束的:<br/>
+```python
+>>> a.barFighters
+<function barFighters at 0x00A98EF0>
+```
+为了绑定它，我盟可以用[types模块中的方法类函数](http://docs.python.org/library/types.html?highlight=methodtype#module-types):<br/>
+```python
+>>> import types
+>>> a.barFighters = types.MethodType( barFighters, a )
+>>> a.barFighters
+<bound method ?.barFighters of <__main__.A instance at 0x00A9BC88>>
+>>> a.barFighters()
+barFighters
+```
+这时候，类的其他实例不会受到影响：<br/>
+```python
+>>> a2.barFighters()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: A instance has no attribute 'barFighters'
+```
+更多的信息，可以在阅读[descriptors](http://users.rcn.com/python/download/Descriptor.htm)和[metaclass](http://www.onlamp.com/pub/a/python/2003/04/17/metaclasses.html)以及[programming](http://www.gnosis.cx/publish/programming/metaclass_2.html)中发现。<br/>
+
+**21. 在Python中，metaclass是什么**<br/>
+**类对象**<br/>在理解metaclass之前，你需要掌握Python中的类。而且Python的类的设计，非常的特别，借鉴了Smalltalk语言。<br/>
+大多数语言中，类只是一段代码用来描述如何生产一个对象。在Python中也有几分这个意思：<br/>
+```python
+>>> class ObjectCreator(object):
+...       pass
+...
+
+>>> my_object = ObjectCreator()
+>>> print(my_object)
+<__main__.ObjectCreator object at 0x8974f2c>
+```
+但是Python中的类不仅仅如此。类，也是对象。<br/>
+对，对象。<br/>
+当你使用**class**这个关键字时，Python执行它并创造一个对象，示例：<br/>
+```python
+>>> class ObjectCreator(object):
+...       pass
+...
+```
+在内存中创建了一个对象名字是"ObjectCreator"。这个对象（类）有能力创造对象（实例），这也是为什么它是类。<br/>
+但它仍然是一个类，因此：<br/>
+- 你可以把它当做一个变量
+- 你可以复制它
+- 你可以给它添加属性
+- 你可以把它当成一个函数的参数
+举例：<br/>
+```python
+>>> print(ObjectCreator) # you can print a class because it's an object
+<class '__main__.ObjectCreator'>
+>>> def echo(o):
+...       print(o)
+...
+>>> echo(ObjectCreator) # you can pass a class as a parameter
+<class '__main__.ObjectCreator'>
+>>> print(hasattr(ObjectCreator, 'new_attribute'))
+False
+>>> ObjectCreator.new_attribute = 'foo' # you can add attributes to a class
+>>> print(hasattr(ObjectCreator, 'new_attribute'))
+True
+>>> print(ObjectCreator.new_attribute)
+foo
+>>> ObjectCreatorMirror = ObjectCreator # you can assign a class to a variable
+>>> print(ObjectCreatorMirror.new_attribute)
+foo
+>>> print(ObjectCreatorMirror())
+<__main__.ObjectCreator object at 0x8997b4c>
+```
+动态创建类<br/>
+类就是对象，你可以快速创建它，像任何其他对象一样。<br/>
+首先，你可以在一个函数里创建一个类，用**class**:<br/>
+```python
+>>> def choose_class(name):
+...     if name == 'foo':
+...         class Foo(object):
+...             pass
+...         return Foo # return the class, not an instance
+...     else:
+...         class Bar(object):
+...             pass
+...         return Bar
+...
+>>> MyClass = choose_class('foo')
+>>> print(MyClass) # the function returns a class, not an instance
+<class '__main__.Foo'>
+>>> print(MyClass()) # you can create an object from this class
+<__main__.Foo object at 0x89c6d4c>
+```
+但是它不是很动态，你仍然需要手写你的类。<br/>
+既然类是对象，他们一定可以被什么东西生成。<br/>
+当你使用**class**关键字时，Python自动创建了这个对象，但是像Python中的其他东西一样，它给你了一个方法手动实现。<br/>
+还记得**type**函数吗。一个让你知道对象类型的古老的函数：<br/>
+```python
+>>> print(type(1))
+<type 'int'>
+>>> print(type("1"))
+<type 'str'>
+>>> print(type(ObjectCreator))
+<type 'type'>
+>>> print(type(ObjectCreator()))
+<class '__main__.ObjectCreator'>
+```
+哦，**type**有另外一种完全不同的功能，它也可以迅速创建类。**type**可以把类的描述作为参数，并返回一个类。(我知道同一个函数根据你传入的值有两种不同的用法是很蠢的，但是它是Python中的一种向后兼容的问题)<br/>
+**type**这样工作：<br/>
+```python
+type(name of the class,
+     tuple of the parent class (for inheritance, can be empty),
+     dictionary containing attributes names and values)
+```
+举个例子<br/>
+```python
+>>> class MyShinyClass(object):
+...       pass
+```
+可以通过这种方法手动生成：<br/>
+```python
+>>> MyShinyClass = type('MyShinyClass', (), {}) # returns a class object
+>>> print(MyShinyClass)
+<class '__main__.MyShinyClass'>
+>>> print(MyShinyClass()) # create an instance with the class
+<__main__.MyShinyClass object at 0x8997cec>
+```
+你可能会注意到我们使用"MyShinyClass"做为类的名字并且作为变量并且作为类的参考。他们可以不同，但是没有必要把事情搞复杂。<br/>
+**type**接受一个字典，定义一个类的参数，所以：<br/>
+```python
+>>> class Foo(object):
+...       bar = True
+```
+可以理解成：<br/>
+```python
+>>> Foo = type('Foo', (), {'bar':True})
+```
+并且可以当成一个普通类来使用：<br/>
+```python
+>>> print(Foo)
+<class '__main__.Foo'>
+>>> print(Foo.bar)
+True
+>>> f = Foo()
+>>> print(f)
+<__main__.Foo object at 0x8a9b84c>
+>>> print(f.bar)
+True
+```
+当然，你可以继承它，所以：<br/>
+```python
+>>> FooChild = type('FooChild', (Foo,), {})
+>>> print(FooChild)
+<class '__main__.FooChild'>
+>>> print(FooChild.bar) # bar is inherited from Foo
+True
+```
+最后你可能想要在你的类里添加方法。只要适当的定义一个函数，然后把它标记为属性。<br/>
+```python
+>>> def echo_bar(self):
+...       print(self.bar)
+...
+>>> FooChild = type('FooChild', (Foo,), {'echo_bar': echo_bar})
+>>> hasattr(Foo, 'echo_bar')
+False
+>>> hasattr(FooChild, 'echo_bar')
+True
+>>> my_foo = FooChild()
+>>> my_foo.echo_bar()
+True
+```
+可以回顾一下：在Python中，类就是对象，你可以动态的创造一个类。<br/>
+这就是当你使用**class**关键字时Python做的事情，使用metaclass时，也是一样的。<br/>
+**什么是metaclass（最终版本）**<br/>
+Metaclass是创建类的原料。<br/>
+你定义类就是为了创建对象，对不对？<br/>
+但是我们知道Python类本身就是对象。<br/>
+所以，这些对象就是metaclass创建的。他们是类的类，你可以这样表述：<br/>
+```python
+MyClass = MetaClass()
+MyObject = MyClass()
+```
+刚才你看到了type允许你做类似这样的事情：<br/>
+```python
+MyClass = type('MyClass', (), {})
+```
+这是因为**type**这个函数实际上是一个metaclass。**type**就是metaclass -- Python用来在后台创造一切类。<br/>
+现在你知道为什么这个东西他喵的写成小写的，而不是**Type**了吧。<br/>
+嗯，我想同样的问题可能发生在用来创造字符串对象的**str**这个类上，**int**是创造整数对象的类，**type**是用来创造类对象的类。<br/>
+通过查看**__class__**参数验证。<br/>
+所有的东西，我是说所有，在Python中都是对象。包括整数，字符串，函数，类。他们全是对象。他们全都由一个类创造而来：<br/>
+```python
+MyClass = MetaClass()
+MyObject = MyClass()
+```
+刚才你看到了type允许你做类似这样的事情：<br/>
+```python
+>>> age = 35
+>>> age.__class__
+<type 'int'>
+>>> name = 'bob'
+>>> name.__class__
+<type 'str'>
+>>> def foo(): pass
+>>> foo.__class__
+<type 'function'>
+>>> class Bar(object): pass
+>>> b = Bar()
+>>> b.__class__
+<class '__main__.Bar'>
+```
+现在，看看所有的**__class__**的**__class__**是什么？<br/>
+```python
+>>> age.__class__.__class__
+<type 'type'>
+>>> name.__class__.__class__
+<type 'type'>
+>>> foo.__class__.__class__
+<type 'type'>
+>>> b.__class__.__class__
+<type 'type'>
+```
+所以，metaclass就是用来创造类对象的原料。<br/>
+如果你想，你可以把他叫做类工厂。<br/>
+**type**是Python使用的内建的metaclass，当然，你可以创造你自己的metaclass。<br/>
+**__metaclass__属性**<br/>
+你可以给你写的类添加一个**__metaclass__属性:**<br/>
+```python
+class Foo(object):
+  __metaclass__ = something...
+  [...]
+```
+如果你这样做，Python会使用metaclass创建**Foo**这个类。<br/>
+小心点，这很复杂。<br/>
+你先写了**class Foo(object)**，但是现在在内存中，还没有创建这个类对象Foo。<br/>
+Python会在类的定义时，检查**__metaclass__**。如果找到了，Python就用它创造一个类对象Foo。如果没有，就用type创造类。<br/>
+多读几次。<br/>
+当你这样：<br/>
+```python
+class Foo(Bar):
+  pass
+```
+Python会做下面这些事情：<br/>
+
+Foo里面有__metaclass__这个属性吗？<br/>
+
+如果有，在内存中创建一个类对象（我是说一个类对象，与我同在）通过使用__metaclass__创建一个同样的名字Foo。<br/>
+
+如果Python找不到__metaclass__，它会在模块层找这个__metaclass__，试图通过同样的方式。（但是仅对于那些没有继承任何东西的类，基本上都是旧式类）<br/>
+
+之后，如果哪都找不到__metaclass__，就使用Bar（第一层父类）自带的metaclass（有可能就是缺省的type）来创建类对象。<br/>
+
+注意，这里的__metaclass__不会被继承，父类的会被继承(Bar.__class__)。如果Bar使用一个用type（而不是type.__new__()）创建Bar本身的__metaclass__属性，那么子类不会继承这个行为。<br/>
+
+现在一个大问题出现了，你可以在__metaclass__里面放什么呢？<br/>
+
+答案是：一些可以创建类的东西。<br/>
+
+然而什么可以创建类的呢？type或者是它的任何子类，或者使用它的东西。<br/>
+
+一个metaclass的主要目的就是当一个类创建的时候，自动的改变它。<br/>
+
+你通常对接口做这些事情，比如你想要创建一个符合当前上下文的类。<br/>
+
+试想一个愚蠢的例子，你决定让你的模块里的所有类的所有属性都用大写。有几种方法可以实现，其中一种是在模块层使用__metaclass__。<br/>
+
+通过这种方法，该模块的所有类在创建时都会使用这个metaclass，而我们只需要告诉metaclass把所有属性都变成大写。<br/>
+幸运的是，__metaclass__可以通过任何方式调用，不需要一个正规的类（我知道，有些名字里带着class的东西不一定是类，想想看吧，它很有用）。<br/>
+所以我们通过一个函数，从简单的例子开始：<br/>
+```python
+# the metaclass will automatically get passed the same argument
+# that you usually pass to `type`
+def upper_attr(future_class_name, future_class_parents, future_class_attr):
+  """
+    Return a class object, with the list of its attribute turned
+    into uppercase.
+  """
+
+  # pick up any attribute that doesn't start with '__' and uppercase it
+  uppercase_attr = {}
+  for name, val in future_class_attr.items():
+      if not name.startswith('__'):
+          uppercase_attr[name.upper()] = val
+      else:
+          uppercase_attr[name] = val
+
+  # let `type` do the class creation
+  return type(future_class_name, future_class_parents, uppercase_attr)
+
+__metaclass__ = upper_attr # this will affect all classes in the module
+
+class Foo(): # global __metaclass__ won't work with "object" though
+  # but we can define __metaclass__ here instead to affect only this class
+  # and this will work with "object" children
+  bar = 'bip'
+
+print(hasattr(Foo, 'bar'))
+# Out: False
+print(hasattr(Foo, 'BAR'))
+# Out: True
+
+f = Foo()
+print(f.BAR)
+# Out: 'bip'
+```
+现在，我们做同样的事情，但是对metaclass使用真正的类：<br/>
+```python
+# remember that `type` is actually a class like `str` and `int`
+# so you can inherit from it
+class UpperAttrMetaclass(type):
+    # __new__ is the method called before __init__
+    # it's the method that creates the object and returns it
+    # while __init__ just initializes the object passed as parameter
+    # you rarely use __new__, except when you want to control how the object
+    # is created.
+    # here the created object is the class, and we want to customize it
+    # so we override __new__
+    # you can do some stuff in __init__ too if you wish
+    # some advanced use involves overriding __call__ as well, but we won't
+    # see this
+    def __new__(upperattr_metaclass, future_class_name,
+                future_class_parents, future_class_attr):
+
+        uppercase_attr = {}
+        for name, val in future_class_attr.items():
+            if not name.startswith('__'):
+                uppercase_attr[name.upper()] = val
+            else:
+                uppercase_attr[name] = val
+
+        return type(future_class_name, future_class_parents, uppercase_attr)
+```
+但是这并不符合面向对象的思想。我们直接调用type，不重写或者调用父类的__new__方法。试一下：<br/>
+```python
+class UpperAttrMetaclass(type):
+
+    def __new__(upperattr_metaclass, future_class_name,
+                future_class_parents, future_class_attr):
+
+        uppercase_attr = {}
+        for name, val in future_class_attr.items():
+            if not name.startswith('__'):
+                uppercase_attr[name.upper()] = val
+            else:
+                uppercase_attr[name] = val
+
+        # reuse the type.__new__ method
+        # this is basic OOP, nothing magic in there
+        return type.__new__(upperattr_metaclass, future_class_name,
+                            future_class_parents, uppercase_attr)
+```
+你可能会主要到多余的参数upperattr_metaclass。它没什么特殊的：一个方法总是接受当前的实例作为第一个参数。就像你在普通的方法中使用self。<br/>
+当然，我这里使用这么长的名字是为了更清楚，但是像self一样，所有参数有惯用的名字。所以一个真正的生产环境的metaclass看起来可能是这样：<br/>
+```python
+class UpperAttrMetaclass(type):
+
+    def __new__(cls, clsname, bases, dct):
+
+        uppercase_attr = {}
+        for name, val in dct.items():
+            if not name.startswith('__'):
+                uppercase_attr[name.upper()] = val
+            else:
+                uppercase_attr[name] = val
+
+        return type.__new__(cls, clsname, bases, uppercase_attr)
+```
+我们可以通过使用super简化继承，让它更清晰。（因此，你可以拥有metaclasses，继承metaclass，继承type）<br/>
+```python
+class UpperAttrMetaclass(type):
+
+    def __new__(cls, clsname, bases, dct):
+
+        uppercase_attr = {}
+        for name, val in dct.items():
+            if not name.startswith('__'):
+                uppercase_attr[name.upper()] = val
+            else:
+                uppercase_attr[name] = val
+
+        return super(UpperAttrMetaclass, cls).__new__(cls, clsname, bases, uppercase_attr)
+```
+差不多就这样，metaclass真没什么更多的内容了。<br/>
+
+使用metaclass的代码非常复杂的背后原因不是metaclass本身，而是你把metaclass用在了那些自我实现，多重继承的东西上，比如__dict__等等。<br/>
+
+总之，metaclass有特殊的技巧实现黑魔法，当然包括复杂的东西。但是对他们自己来说，他们很简单：<br/>
+
+- 拦截一个类的创建<br/>
+
+- 装饰一个类<br/>
+
+- 返回装饰过的类<br/>
+**为什么使用metaclass替代函数**<br/>
+既然__metaclass__可以接受任何调用，为什么你还要使用明显更复杂的类呢？<br/>
+
+有几个原因：<br/>
+
+- 目的更明确。当你看到UpperAttrMetaclass(type)的时候就，你知道接下去会发生什么<br/>
+
+- 你可以使用面向对象，metaclass可以继承metaclass，重写父类的方法，Metaclass也可以使用metaclass。<br/>
+
+- 你可以更好的组织你的代码结构。不要像上面的例子哪样琐碎的使用metaclass。对某些东西来说它通常是复杂的。创造几个方法并把它们整合到一个类里是很有用的，可以让代码更易读。<br/>
+
+- 关联使用__new__，__init__，和__call__。它们允许你做不同的东西，尽管你可以把它们都做在__new__里面，有些人用__init__更舒服。<br/>
+
+- 这些都叫metaclass，靠，它们肯定很有意义。<br/>
+**你他喵为什么会使用metaclass**<br/>
+现在有一个大问题，为什么使用这种倾向于引起不清晰的错误的特性？<br/>
+
+通常你不会这样：<br/>
+```python
+Metaclass的99%的使用者都不必担心它的深度魔法。如果你不知道你是否需要它们，就别用（那些需要它们的人知道为何用它们，而且不需要解释）
+```
+Python Guru Tim Peters<br/>
+
+metaclass的主要作用就是创造一个接口。典型的用法就是Django ORM。<br/>
+
+它允许你这样定义这些东西：<br/>
+```python
+class Person(models.Model):
+    name = models.CharField(max_length=30)
+    age = models.IntegerField()
+```
+但是你这样用：<br/>
+```python
+guy = Person(name='bob', age='35')
+print(guy.age)
+```
+它不会返回一个IntegerField对象。它会返回一个int，甚至能直接从数据库里拿。<br/>
+
+这可能是由于models.Model为它定义了__metaclass__，使用一些魔法方法，让你可以定义一些可以做复杂的事情的简单声明关联数据库。<br/>
+
+Django让一些复杂的事情看起来很简单，通过暴露一个简单的接口，使用metaclass，重构了接口的代码让真正的行为在幕后执行。<br/>
+**结语**<br/>
+首先你知道类是对象而且可以创建实例。<br/>
+
+实际上，类本身也是实例，是metaclass的实例。<br/>
+```python
+>>> class Foo(object): pass
+>>> id(Foo)
+142630324
+```
+所有的东西都是对象，在Python中，它们不是一个类的实例，就是metaclass的实例。<br/>
+
+除了type。<br/>
+
+type是它自己的metaclass。这些东西在纯净的Python环境下是看不到的，他们在执行层做了一些交互来实现。<br/>
+
+第二，metaclass是复杂的。你不需要在每一个简单的类里使用它。你可以用两种不同的方法来改变一个类：<br/>
+
+- [monkey patching](http://en.wikipedia.org/wiki/Monkey_patch)<br/>
+
+- 类的装饰器<br/>
+
+99%的当你需要改变一个类的时刻，你需要用这些东西。<br/>
+
+但是99%的时间里，你不根本不需要改变一个类。<br/>
+
+**22. Python的"最小惊奇"：多重默认参数**<br/>
+实际上，这不是一个设计瑕疵，而且不它不是因为内部或者表现问题。<br/>
+
+它单纯是来自Python中，函数是第一梯队的对象的事实，而且不仅仅是一段代码。<br/>
+
+从这个角度，你会发现它很明智：一个函数是一个对象取决于它的定义；默认参数是一种类似丛书数据，而且它们的状态可能从一次到另一次的调用过程中发生改变-和在其他对象中一样。<br/>
+
+不管怎样，Effbot在[Default Parameter Values in Python](http://effbot.org/zone/default-values.htm)中对这种表现有一个很好的解释。<br/>
+
+我发现它很干净，我强烈推荐阅读以下，并且对函数对象是如何工作的掌握更多知识。<br/>
+
+## pip/easy_install
+**1. 如何使用 pip 更新所有包**<br/>
+如何使用pip更新python的所有包<br/>
+没有内置的标志可以实现，但是你可以这么做<br/>
+```python
+pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U
+```
+
+**2. 如何删除Python easy_install安装的包**<br/>
+pip, setuptools/easy_install的另一种选择，提供uninstall命令<br/>
+首先，移除依赖<br/>
+```python
+$ easy_install -m [PACKAGE]
+```
+然后，手动删除egg文件:<br/>
+```python
+$ rm -rf .../python2.X/site-packages/[PACKAGE].egg
+```
+
+**3. 如何获取Python的site-packages目录位置**<br/>
+参考[How to Install Django" documentation](http://docs.djangoproject.com/en/dev/topics/install/#remove-any-old-versions-of-django),可以在shell中执行<br/>
+```python
+python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+```
+更好的可读性<br/>
+```python
+from distutils.sysconfig import get_python_lib
+print(get_python_lib())
+```
+
+**4. setup.py安装后如何卸载**<br/>
+使用下面命令安装的包如何卸载<br/>
+```python
+python setup.py install
+```
+手工删除的话<br/>
+```python
+python setup.py install --record files.txt
+cat files.txt | xargs rm -rf
+```
+
+**5. 如何获取安装的python模块列表**<br/>
+```python
+>>> help('modules')
+```
+
+**6. 如何在正确使用pip，virtualenv，distribute构建Python环境**<br/>
+你可以不向Python本身添加任何东西,你不需要sudo或者任何权限,你不需要编辑任何文件。<br/>
+在自引导的虚拟环境里安装virtualenv。通过这个虚拟环境，它可以创建更多。自从virtualenv搭载了pip和distribute，你就可以从其中一个获得所有东西。<br/>
+- 下载virtualenv<br/>
+- 解压源码<br/>
+- 用解压好的源文件创建一个干净的虚拟环境。选择正确的命令，虚拟环境会自带pip和distribute。<br/>
+- 在virtualenv中安装virtualenv<br/>
+- 使用第一个自建的环境去创建更多！<br/>
+
+## 其他
+**1. 在virtualenv中如何使用不同的python版本**<br/>
+在创建virtualenv实例时，使用-p选项<br/>
+```python
+virtualenv -p /usr/bin/python2.6 <path/to/new/virtualenv/>
+```
+
+**2. 如何离开virtualenv**<br/>
+使用virtualenv时<br/>
+```python
+me@mymachine:~$ workon env1
+(env1)me@mymachine:~$ workon env2
+(env2)me@mymachine:~$ workon env1
+(env1)me@mymachine:~$
+```
+如何退出某个环境<br/>
+```python
+$ deactivate
+```
+
+**3. Python中什么项目结构更好**<br/>
+假设你要开发一个较大的客户端程序(非web端),如何组织项目目录和递归？<br/>
+不要太在意这个.按你高兴的方式组织就行.Python项目很简单，所以没有那么多愚蠢的规则<br/>
+```python
+/scripts or /bin  命令行脚本
+/tests 测试
+/lib C-语言包
+/doc 文档
+/apidoc api文档
+```
+并且顶层目录包含README和Config<br/>
+难以抉择的是，是否使用/src树. /src,/lib,/bin在Python中没有明显的区别，和Java/c不同.因为顶层/src文件夹显得没有什么实际意义，你的顶层目录可以是程序顶层架构的目录<br/>
+```python
+/foo
+/bar
+/baz
+```
+我建议将这些文件放入到"模块名"的目录中，这样，如果你在写一个应用叫做quux, /quux目录将包含所有这些东西.你可以在PYTHONPATH中加入 /path/to/quux/foo,这样你可以QUUX.foo中重用模块<br/>
+另一个回答:<br/>
+```python
+Project/
+|-- bin/
+|   |-- project
+|
+|-- project/
+|   |-- test/
+|   |   |-- __init__.py
+|   |   |-- test_main.py
+|   |
+|   |-- __init__.py
+|   |-- main.py
+|
+|-- setup.py
+|-- README
+```
+
+**4. 在Python中使用Counter错误**<br/>
+当使用Counter时，出现异常<br/>
+```python
+AttributeError: 'module' object has no attribute 'Counter'
+
+from collections import Counter
+ImportError: cannot import name Counter
+```
+原因：版本问题，Counter在 python2.7中才被加入到这个模块，你可能使用了Python2.6或更老的版本,可以看下[文档](http://docs.python.org/2/library/collections.html#collections.Counter)<br/>
+如果要在 Python2.6或2.5版本使用，可以看[这里](http://code.activestate.com/recipes/576611-counter-class/)<br/>
+
+**5. 如何测试一个python脚本的性能**<br/>
+引入<br/>
+```python
+import cProfile
+cProfile.run('foo()')
+```
+执行脚本<br/>
+```python
+python -m cProfile myscript.py
+```
+结果<br/>
+```python
+1007 function calls in 0.061 CPU seconds
+
+Ordered by: standard name
+ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    1    0.000    0.000    0.061    0.061 <string>:1(<module>)
+1000    0.051    0.000    0.051    0.000 euler048.py:2(<lambda>)
+    1    0.005    0.005    0.061    0.061 euler048.py:2(<module>)
+    1    0.000    0.000    0.061    0.061 {execfile}
+    1    0.002    0.002    0.053    0.053 {map}
+    1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler objects}
+    1    0.000    0.000    0.000    0.000 {range}
+    1    0.003    0.003    0.003    0.003 {sum}
+```
+
+**6. 如何获取5分钟之后的unix时间戳**<br/>
+使用[calendar.timegm](http://docs.python.org/3.3/library/calendar.html#calendar.timegm)<br/>
+```python
+future = datetime.datetime.now() + datetime.timedelta(minutes = 5)
+return calendar.timegm(future.utctimetuple())
+```
+strftime的%s在windows中无法使用<br/>
+
+**7. 在python中如何调用外部命令?**<br/>
+可以看下标准库中的[subprocess](http://docs.python.org/library/subprocess.html)<br/>
+```python
+from subprocess import call
+call(["ls", "-l"])
+```
+subprocess相对于system的好处是, 更灵活。但是 quick/dirty/one time scripts, os.system is enough<br/>
+
+**8. 用Python在终端打印出有颜色的文字?**<br/>
+某种程度上这取决于你使用的平台。通常的方法是用ANSI转义序列。举个简单的例子，这有一些来自[blender build](https://svn.blender.org/svnroot/bf-blender/trunk/blender/build_files/scons/tools/bcolors.py)scripts的代码：<br/>
+```python
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+```
+为了使用上面那种代码，你应该这样做：<br/>
+```python
+print bcolors.WARNING + "Warning: No active frommets remain. Continue?"
+      + bcolors.ENDC
+```
+这在unixes包括OS X，linux和windows(为你提供[enable ansi.sys](http://support.microsoft.com/kb/101875))上会生效。有ansi代码来设置颜色，移动光标，做更多事情。<br/>
+如果你想了解更为复杂的内容（这听上去好像你正在写一款游戏），你应该深入“cursor”这个没款，它会为你处理很多复杂的部分。[Python Curses HowTO](https://docs.python.org/2/howto/curses.html)是一篇很好的介绍。<br/>
+如果你是用的不是ASCII（或者说你没有用PC)，你面对诸如ascii字符低于127，’#’，‘@’可能是你得到空格的最好的赌注。如果你确定你的终端使用[IBM extended ascii character set](http://telecom.tbi.net/asc-ibm.html)，你将会有更多的选择，字符176，字符177，字符178，和字符219代表”空格字符”。<br/>
+一些流行的基于文本的程序，比如”Dwarf Fortress”，仿照文本的模式做成了图形模式，使用传统PC的字体图片。你可以在[Dwarf Frotress Wiki](http://dwarffortresswiki.org/DF2014:Tilesets)找一些这种点阵图看看（[user-made tilesets](http://dwarffortresswiki.org/Tileset_repository)）。<br/>
+[Text Mode Demo Contest](http://en.wikipedia.org/wiki/TMDC)有更多把图片处理成文本的源码。<br/>
+
+**8. 我该如何保护我的Python代码**<br/>
+Python作为字节码编译的解释型语言，是很难封闭的。几遍你使用一种exe包比如[py2exe](http://py2exe.org/)，可执行文件的结构依然是清晰可见的，而且Python的字节编码是非常易懂的。<br/>
+通常是这样，你必须要想出一个折衷的办法。保护代码究竟重不重要。里面是不是有很私密的东西(比如银行的对称加密秘钥），或者你是一个偏执狂。选择一门可以让你更快速开发优秀产品的语言，对于你的奇特想法从现实主义考虑一下它的价值。<br/>
+如果你确定使用要强制授权保证安全，可以写一个小的C拓展，那么这个授权检验就会变得很难逆转（但不是完全不可能）。然后把你的大批代码放进Python。<br/>
+
+**9. 首选的Python单元测试框架**<br/>
+nose实际上不是一个单元测试的框架。它是一个测试的执行器，并且是最好的一款。它可以运行通过pyUnit，py.test和doctest创建的测试。<br/>
+我首选的单元测试框架是pyUnit。它和其他xUnit框架一样，而且可以让没有Python基础的人很好上手。而且它对Eclipse/PyDev提供非常好的支持。<br/>
+在py.test中，我发现了很多层级的安装/卸载混淆在一起。我还发现它生成了很多非常无组织和难阅读的单元测试。<br/>
+doctest对于简单的东西来说还好，但是它很有限，不能真正的用来测试复杂和交互的代码。<br/>
+
+**10. Python的单元测试放在哪？**<br/>
+对于一个文件module.py来说，单元测试通常叫做test_module.py，遵循Python的命名规则。<br/>
+在以下几种地方放置test_module.py都是可以接受的：<br/>
+- 和module.py放在同一个文件夹。<br/>
+- 在../tests/test_module.py（与代码文件夹的同级）<br/>
+- 在tests/test_module.py （在代码文件夹下的同层）<br/>
+我倾向第一种方法，它可以更直观的被找到并且引入。不管你在使用什么样的开发系统，你都可以轻松的配置并找到以test_开头的文件。实际上，方便查找的缺省的单元测试模型是test*.py。<br/>
+
+**11. distribute, distutils, setuptools和distutils2的区别**<br/>
+到2014年9月，所有其他回答的时间都超过一年了。当你寻求Python打包的建议时，记得看一下发布的日期，而且不要相信过时的信息。<br/>
+这篇搭建在Readthedocs的文章Python Packaging User Guide值得一读。每一页都有一个最近时间展示，所以你可以检查最新的手册，而且它相当的全面。Python 3.4的官方文档已经从信任的角度把这个链接加进来了。<br/>
+推荐 Setuptools，除非你的需求非常基础，那么你可能只需要 Distutils。Setuptools在Virtualenv和Pip上的表现非常好，我强烈推荐。<br/>
+作为一个边注，我建议使用Virtualenv1.10或者更高的版本，因为对Python2或3来说，它是第一个识别Setuptools/Distribute并合并的版本。<br/>
+
+
+> 学习完毕，虽然有些内容还不明白，但还是学到了不少东西。

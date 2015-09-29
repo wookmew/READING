@@ -11,4 +11,7 @@
 <br/>
 1. [《鸟哥的Linux私房菜--服务器架设篇》-- 读书笔记](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8A%E9%B8%9F%E5%93%A5%E7%9A%84Linux%E7%A7%81%E6%88%BF%E8%8F%9C--%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E8%AE%BE%E7%AF%87%E3%80%8B.md)--暂放，估计会换本书。
 
+# JavaScript  
+1. [《JavaScript高级程序设计》-- 读书笔记](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md)
+
 

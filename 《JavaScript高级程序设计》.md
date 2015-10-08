@@ -3,9 +3,9 @@
 # 目录  
 - [第一章 JavaScript简介](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md#第一章-javascript简介)
 - [第二章 在HTML中使用JavaScript](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md#第二章-在html中使用javascript)
-- [第三章 基本概念](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md#第三章基本概念)  
-- [第四章 变量，作用域和内存问题]()
-- [第五章 引用类型]()
+- [第三章 基本概念](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md#第三章-基本概念)  
+- [第四章 变量，作用域和内存问题](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md#第四章-变量作用域和内存问题)
+- [第五章 引用类型](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md#第五章-引用类型)
 
 # 第一章 JavaScript简介  
 
@@ -575,11 +575,13 @@ ECMAScript 5为数组实例添加了两个位置方法：indexOf()和lastIndexOf
 这两个方法都返回要查找的项在数组中的位置，或者在没找到的情况下返回-1。在比较第一个参数与数组中的每一项时，会使用全等操作符；也就是说，要求查找的项必须严格相等（就像使用===一样）。  
 **9. 迭代方法**  
 ECMAScript 5为数组定义了5个迭代方法。每个方法都接收两个参数：要在每一项上运行的函数和（可选的）运行该函数的作用域对象——影响 this 的值。传入这些方法中的函数会接收三个参数：数组项的值、该项在数组中的位置和数组对象本身。根据使用的方法不同，这个函数执行后的返回值可能会也可能不会影响方法的返回值。以下是这5个迭代方法的作用。  
+
 - every()：对数组中的每一项运行给定函数，如果该函数对每一项都返回true，则返回 true。  
 - filter()：对数组中的每一项运行给定函数，返回该函数会返回true的项组成的数组。  
 - forEach()：对数组中的每一项运行给定函数。这个方法没有返回值。  
 - map()：对数组中的每一项运行给定函数，返回每次函数调用的结果组成的数组。  
 - some()：对数组中的每一项运行给定函数，如果该函数对任一项返回true，则返回true。  
+
 ```javascript  
 'use strict';
 
@@ -636,6 +638,7 @@ Date类型还有一些专门用于将日期格式化为字符串的方法，这�
 - toLocaleDateString()——以特定于地区的格式显示星期几、月、日和年；  
 - toLocaleTimeString()——以特定于实现的格式显示时、分、秒；  
 - toUTCString()——以特定于实现的格式完整的UTC日期。  
+
 与toLocaleString()和toString()方法一样，以上这些字符串格式方法的输出也是因浏览器而异的，因此没有哪一个方法能够用来在用户界面中显示一致的日期信息。除了前面介绍的方法之外,还有一个名叫 toGMTString() 的方法,这是一个与toUTCString() 等价的方法,其存在目的在于确保向后兼容。不过,ECMAScript 推荐现在编写的代码一律使用 toUTCString() 方法。  
 
 ### 5.4 RegEXP类型  
@@ -713,6 +716,7 @@ RegExp的每个实例都具有下列属性，通过这些属性可以取得有�
 ES6新增属性  
 - sticky:布尔值，表示是否设置了y标志。  
 - flags: 字符串，表示正则表达式的标志。  
+
 **2. RegExp 实例方法**  
 RegExp对象的主要方法是exec()，该方法是专门为捕获组而设计的。exec()接受一个参数，即要应用模式的字符串，然后返回包含第一个匹配项信息的数组；或者在没有匹配项的情况下返回null。返回的数组虽然是Array 的实例，但包含两个额外的属性：index 和input。其中，index 表示匹配项在字符串中的位置，而 input 表示应用正则表达式的字符串。在数组中，第一项是与整个模式匹配的字符串，其他项是与模式中的捕获组匹配的字符串（如果模式中没有捕获组，则该数组只包含一项）。  
 ```javascript  
@@ -730,4 +734,251 @@ alert(matches[2]); // " and baby"
 对于 exec()方法而言，即使在模式中设置了全局标志（g），它每次也只会返回一个匹配项。在不设置全局标志的情况下，在同一个字符串上多次调用 exec()将始终返回第一个匹配项的信息。而在设置全局标志的情况下，每次调用exec()则都会在字符串中继续查找新匹配项。  
 
 ### 5.5 Function类型  
-说起来 ECMAScript中什么最有意思，我想那莫过于函数了——而有意思的根源，则在于函数实际上是对象。每个函数都是Function类型的实例，而且都与其他引用类型一样具有属性和方法。**由于函数是对象，因此函数名实际上也是一个指向函数对象的指针，不会与某个函数绑定。**
+说起来 ECMAScript中什么最有意思，我想那莫过于函数了——而有意思的根源，则在于函数实际上是对象。每个函数都是Function类型的实例，而且都与其他引用类型一样具有属性和方法。**由于函数是对象，因此函数名实际上也是一个指向函数对象的指针，不会与某个函数绑定。**  
+函数通常是使用函数声明语法定义的。  
+```javascript  
+'use strict';
+
+function sum (num1, num2) {
+  return num1 + num2;
+}
+//下面是使用函数表达式定义函数的方式，和上面效果是一样的。
+var sum = function(n1, n2){
+  return n1 + n2;  
+};//注意函数末尾有一个分号，就像声明其他变量时一样。
+//最后一种定义函数的方式是使用Function构造函数。Function构造函数可以接收任意数量的参数，但最后一个参数始终都被看成是函数体，而前面的参数则枚举出了新函数的参数。
+var sum = new Function("num1", "num2", "return num1 + num2"); 
+// 不推荐，因为这种语法会导致解析两次代码(第一次是解析常规 ECMAScript 代码,第二次是解析传入构造函数中的字符串)
+```  
+**1. 没有重载**  
+将函数名想象为指针，也有助于理解为什么 ECMAScript中没有函数重载的概念。在创建第二个同名函数时,实际上覆盖了引用第一个函数的函数名变量。  
+**2. 函数声明与函数表达式**  
+解析器会率先读取函数声明，并使其在执行任何代码之前可用（可以访问）；至于函数表达式，则必须等到解析器执行到它所在的代码行，才会真正被解释执行在代码开始执行之前，解析器就已经通过一个名为函数声明提升（function declaration hoisting）的过程，读取并将函数声明添加到执行环境中。对代码求值时，JavaScript引擎在第一遍会声明函数并将它们放到源代码树的顶部。  
+```javascript  
+'use strict';
+
+//ok
+alert(sum(10, 10));
+function sum(n1, n2){
+    return n1 + n2;
+}
+
+//error
+alert(sum(10, 10));
+var sum = function(n1, n2){
+    return n1 + n2;
+};
+```  
+**3. 作为值的函数**  
+因为 ECMAScript中的函数名本身就是变量，所以函数也可以作为值来使用。也就是说，不仅可以像传递参数一样把一个函数传递给另一个函数，而且可以将一个函数作为另一个函数的结果返回（将函数返回这是一种很有用的技巧）  
+```javascript  
+'use strict';
+
+function callSomeFunction(someFunction, someArgument){ //someFunction是一个函数
+  return someFunction(someArgument);
+}
+```  
+**4. 函数内部属性**  
+在函数内部，有两个特殊的对象：arguments和this。  
+arguments是一个类数组对象，包含着传入函数中的所有参数。虽然 arguments 的主要用途是保存函数参数，但这个对象还有一个名叫callee的属性，该属性是一个指针，指向拥有这个arguments对象的函数。  
+```javascript  
+'use strict';
+
+function f(num){
+    if (num <= 1){
+        return 1;
+    }else{
+        // return num * factorial(num - 1); 和下面效果相同，但是如果引用函数的变量名不是factorial而是var a = factorial，同时factorial被指向另一个函数，通过a调用该方法，那么这样就会有问题了
+        return num * arguments.callee(num-1);//通过这种方法，消除了和函数名的耦合
+    }
+}
+```  
+函数内部的另一个特殊对象是 this ,其行为与 Java 和 C#中的 this 大致类似。this引用的是函数据以执行的环境对象——或者也可以说是this值（当在网页的全局作用域中调用函数时，this对象引用的就是window）。一定要牢记，函数的名字仅仅是一个包含指针的变量而已。  
+**5. 函数属性和方法**  
+ECMAScript 中的函数是对象，因此函数也有属性和方法。每个函数都包含两个属性：length 和prototype。其中，length 属性表示函数希望接收的命名参数（形参）的个数,prototype是保存它们所有实例方法的真正所在。  
+每个函数都包含两个非继承而来的方法：apply()和 call()。  
+apply()方法接收两个参数：一个是在其中运行函数的作用域，另一个是参数数组。其中，第二个参数可以是 Array 的实例，也可以是arguments对象。下例中，因为是在全局作用域中调用的,所以传入的就是 window 对象  
+```javascript  
+'use strict';
+
+function sum(n1. n2){
+    return n1 + n2;
+}
+function callSum1(n1, n2){
+    return sum.apply(this, arguments);// 传入 arguments 对象
+}
+function callSum2(n1, n2){
+    return sum.apply(this, [num1, num2]);// 传入数组
+}
+alert(callSum1(10, 10));//20
+alert(callSum2(10, 10));//20
+```  
+call() 方法与 apply()方法的作用相同，它们的区别仅在于接收参数的方式不同。对于 call()方法而言，第一个参数是this值没有变化，变化的是其余参数都直接传递给函数。换句话说，在使用call()方法时,传递给函数的参数必须逐个列举出来。  
+传递参数并非apply()和call()真正的用武之地；它们真正强大的地方是能够扩充函数赖以运行的作用域。  
+```javascript  
+'use strict';
+
+window.color = "red";
+var o = {color: "blue"};
+function sayColor(){
+    alert(this.color);
+};
+sayColor(); //red
+sayColor.call(this);//red
+sayColor.call(window); //red
+sayColor.call(o); //blue
+```  
+ECMAScript 5还定义了一个方法：bind()。这个方法会创建一个函数的实例，其 this 值会被绑定到传给bind()函数的值  
+```javascript  
+'use strict';
+
+window.color = "red";
+var o = {color: "blue"};
+function sayColor(){
+    alert(this.color);
+}
+var os = sayColor.bind(o);
+os(); //blue
+```  
+每个函数继承的 toLocaleString()和 toString()方法始终都返回函数的代码,另外一个继承的valueOf()方法同样也只返回函数代码。  
+**6. 默认参数**  
+ES6允许为函数的参数设置默认值，即直接写在参数定义的后面。  
+```javascript  
+'use strict';
+
+function log(x, y = 'World'){
+    console.log(x, y);
+}
+log('Hello') // Hello World
+```  
+另一个需要注意的地方是，参数默认值所处的作用域，不是全局作用域，而是函数作用域。  
+```javascript  
+'use strict';
+
+var x = 1;
+function foo(x, y = x){
+    console.log(y);
+}
+foo(2) //2
+```  
+**7. rest参数**  
+ES6引入rest参数（形式为“…变量名”），用于获取函数的多余参数，这样就不需要使用arguments对象了。rest参数搭配的变量是一个数组，该变量将多余的参数放入数组中。（和Java的变长参数类似）注意，rest参数之后不能再有其他参数（即只能是最后一个参数），否则会报错。函数的length属性，不包括rest参数。  
+```javascript  
+'use strict';
+
+(function(a, ...b) {}).length  // 1
+```  
+**8. 扩展运算符**  
+扩展运算符（spread）是三个点（…）。它好比rest参数的逆运算，将一个数组转为用逗号分隔的参数序列。该运算符主要用于函数调用。  
+```javascript  
+'use strict';
+
+//下面max,push 方法不接受数组
+// ES6的写法
+Math.max(...[14, 3, 77])
+// 等同于
+Math.max(14, 3, 77);
+
+// ES5的写法
+var arr1 = [0, 1, 2];
+var arr2 = [3, 4, 5];
+Array.prototype.push.apply(arr1, arr2);
+// ES6的写法
+var arr1 = [0, 1, 2];
+var arr2 = [3, 4, 5];
+arr1.push(...arr2);
+
+var a = [1];
+var b = [2, 3, 4];
+var c = [6, 7];
+var d = [0, ...a, ...b, 5, ...c];
+```  
+**9. 基本包装类型**  
+为了便于操作基本类型值，ECMAScript提供了3个特殊的引用类型：Boolean、Number和String。实际上，每当读取一个基本类型值的时候，后台就会创建一个对应的基本包装类型的对象，从而让我们能够调用一些方法来操作这些数据。  
+**Boolean 类型**  
+Boolean 对象在 ECMAScript 中的用处不大,因为它经常会造成人们的误解。所以不推荐使用。  
+**Number 类型**  
+和Boolean类型类似，不推荐直接创建Number类型的实例，而应该使用基本类型。  
+**String 类型**  
+和Java中的String有点类似，String类型的方法只是返回一个新的字符串，不会改变原字符串。  
+
+### 5.7 单体内置对象  
+由ECMAScript实现提供的，不依赖于宿主环境的对象。  
+**1. Global对象**  
+Global（全局）对象可以说是ECMAScript中最特别的一个对象了，因为不管你从什么角度上看，这个对象都是不存在的。ECMAScript中的Global对象在某种意义上是作为一个终极的“兜底儿对象”来定义的。换句话说，不属于任何其他对象的属性和方法，最终都是它的属性和方法。事实上，没有全局变量或全局函数；所有在全局作用域中定义的属性和函数，都是Global对象的属性。诸如 isNaN() 、 isFinite() 、 parseInt() 以及 parseFloat() ,实际上全都是 Global 对象的方法。  
+**2. Math 对象**  
+Math对象包含的属性大都是数学计算中可能会用到的一些特殊值。  
+
+### 5.8 键集合类型  
+**1. Map 类型**  
+JavaScript的对象（Object），本质上是键值对的集合（Hash结构），但是只能用字符串当作键。这给它的使用带来了很大的限制。  
+为了解决这个问题，ES6提供了Map数据结构。它类似于对象，也是键值对的集合，但是“键”的范围不限于字符串，各种类型的值（包括对象）都可以当作键。也就是说，Object结构提供了“字符串—值”的对应，Map结构提供了“值—值”的对应，是一种更完善的Hash结构实现。如果你需要“键值对”的数据结构，Map比Object更合适。作为构造函数，Map可以接受一个数组作为参数。该数组的成员是一个个表示键值对的数组。  
+**1. WeakMap 类型**  
+WeakMap结构与Map结构基本类似，唯一的区别是它只接受对象作为键名（null除外），不接受原始类型的值作为键名，而且键名所指向的对象，不计入垃圾回收机制。  
+WeakMap的设计目的在于，键名是对象的弱引用（垃圾回收机制不将该引用考虑在内），所以其所对应的对象可能会被自动回收。当对象被回收后，WeakMap自动移除对应的键值对。典型应用是，一个对应DOM元素的WeakMap结构，当某个DOM元素被清除，其所对应的WeakMap记录就会自动被移除。基本上，WeakMap的专用场合就是，它的键所对应的对象，可能会在将来消失。WeakMap结构有助于防止内存泄漏。  
+**3. Set 类型**  
+ES6提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。  
+**3. WeakSet 类型**  
+WeakSet结构与Set类似，也是不重复的值的集合。但是，它与Set有两个区别。  
+首先，WeakSet的成员只能是对象，而不能是其他类型的值。  
+其次，WeakSet中的对象都是弱引用，即垃圾回收机制不考虑WeakSet对该对象的引用，也就是说，如果其他对象都不再引用该对象，那么垃圾回收机制会自动回收该对象所占用的内存，不考虑该对象还存在于WeakSet之中。这个特点意味着，无法引用WeakSet的成员，因此WeakSet是不可遍历的。  
+
+### 5.9 反射类型  
+**1. Proxy**  
+Proxy用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种“元编程”（meta programming），即对编程语言进行编程。  
+Proxy可以理解成，在目标对象之前架设一层“拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写。Proxy这个词的原意是代理，用在这里表示由它来“代理”某些操作，可以译为“代理器”。（与Java中动态代理类似）  
+```javascript  
+'use strict';
+
+var proxy = new Proxy(target, handler)
+```  
+Proxy对象的所有用法，都是上面这种形式，不同的只是handler参数的写法。其中，new Proxy()表示生成一个Proxy实例，target参数表示所要拦截的目标对象，handler参数也是一个对象，用来定制拦截行为。  
+**1. Reflect**  
+Reflect对象与Proxy对象一样，也是ES6为了操作对象而提供的新API。Reflect对象的设计目的有这样几个。  
+- 将Object对象的一些明显属于语言层面的方法，放到Reflect对象上。现阶段，某些方法同时在Object和Reflect对象上部署，未来的新方法将只部署在Reflect对象上。  
+- 修改某些Object方法的返回结果，让其变得更合理。比如，Object.defineProperty(obj, name, desc)在无法定义属性时，会抛出一个错误，而Reflect.defineProperty(obj, name, desc)则会返回false。  
+- 让Object操作都变成函数行为。某些Object操作是命令式，比如name in obj和delete obj[name]，而Reflect.has(obj, name)和Reflect.deleteProperty(obj, name)让它们变成了函数行为。  
+- Reflect对象的方法与Proxy对象的方法一一对应，只要是Proxy对象的方法，就能在Reflect对象上找到对应的方法。这就让Proxy对象可以方便地调用对应的Reflect方法，完成默认行为，作为修改行为的基础。  
+```javascript  
+'use strict';
+
+Proxy(target,{
+    set: function(target, name, value, receiver){
+        var success = Reflect.set(target, name, value, receiver);
+        if (success){
+            log('property' + name + 'on' + target + 'set to' + value);
+        }
+        return success;
+    }
+});
+```  
+
+### 5.10 控制抽象类型  
+**1. Iteration 接口**  
+ECMAScript 中一个接口是一组键值对属性，这些属性的键所对应的值符合特定的规范。如果一个对象提供了一个接口描述的所有属性，那么这个对象就实现了这个接口。一个接口并不是被单独的一个对象表示。可能有很多单独的对象实现符合某个接口，一个单独的对象可能实现多个接口。  
+通过统一的接口机制，可以使用for-of来遍历不同的数据结构。  
+**2. Iterable 接口**  
+这个接口只有一个属性，即Symbol.iterator，它是一个函数，这个函数返回一个实现了Iterator接口的对象。  
+在ES6中，有些数据结构原生实现了这个接口（比如数组），不用任何处理，就可以被for…of循环遍历，有些就不行（比如对象）。原因在于，这些数据结构原生部署了Symbol.iterator属性（详见下文），另外一些数据结构没有。凡是部署了Symbol.iterator属性的数据结构，就称为实现了Iterable接口。调用这个接口，就会返回一个Iterator对象。  
+**3. Iterator 接口**  
+个接口有一个属性，next，这个属性是一个函数，它返回一个实现了IteratorResult接口的对象。如果上一步调用next返回的对象的done属性已经是true了，那么之后调用next函数也要返回一个done属性为true的IteratorResult对象。这个要求并不是强制的。  
+该接口还有两个可选的属性return 和 throw。这两个属性都是方法，并且方法返回值都是IteratorResult对象。done为true，即遍历结束时，如果存在return方法，value的值会被设置为return方法。这并不是强制要求的。  
+**4. IteratorResult 接口**  
+包含value和done两个属性的对象。其中，value属性是当前成员的值，如果iterator提供了return方法的花，done为true时，这个value应该是iterator的return属性的值即return函数，否则done为true时value就是undefined，这种情况下可以没有value属性；done属性是一个布尔值，表示遍历是否结束，如果不存在done，就认为done属性为false。  
+
+### 5.11 Promise 类型  
+所谓Promise，就是一个对象，用来传递异步操作的消息。它代表了某个未来才会知道结果的事件（通常是一个异步操作），并且这个事件提供统一的API，可供进一步处理。Promise对象有以下两个特点。  
+- 对象的状态不受外界影响。Promise对象代表一个异步操作，有三种状态：Pending（进行中）、Resolved（已完成，又称Fulfilled）和Rejected（已失败）。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态。这也是Promise这个名字的由来，它的英语意思就是“承诺”，表示其他手段无法改变。  
+- 一旦状态改变，就不会再变，任何时候都可以得到这个结果。Promise对象的状态改变，只有两种可能：从Pending变为Resolved和从Pending变为Rejected。只要这两种情况发生，状态就凝固了，不会再变了，会一直保持这个结果。就算改变已经发生了，你再对Promise对象添加回调函数，也会立即得到这个结果。这与事件（Event）完全不同，事件的特点是，如果你错过了它，再去监听，是得不到结果的。  
+```javascript  
+'use strict';
+
+var promise = new Promise(function(resolve, reject){
+   // ... some code
+   if(/* 异步操作成功 */){
+    resolve(value);
+   } else{
+    reject(error);
+   }
+});
+```  

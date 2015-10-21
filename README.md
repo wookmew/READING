@@ -14,5 +14,5 @@
 1. [《JavaScript高级程序设计》-- 读书笔记](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8AJavaScript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B.md)  
 
 # 修炼  
-1. [《代码大全2》]()
+1. [《代码大全2》](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8A%E4%BB%A3%E7%A0%81%E5%A4%A7%E5%85%A82%E3%80%8B.md)
 

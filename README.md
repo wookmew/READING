@@ -2,7 +2,7 @@
 <br/>
 1. [STACKOVERFLOW PYTHON 百问](https://github.com/GJBLUE/READING-/blob/master/STACKOVERFLOW%20PYTHON.md)--已读完  
 2. [《Python Web开发：测试驱动方法》-- 读书笔记](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%20Web%E5%BC%80%E5%8F%91%EF%BC%9A%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E6%96%B9%E6%B3%95%E3%80%8B.md)--已读完  
-3. [《Python 标准库》-- 读书笔记]()
+3. [《Python 标准库》-- 读书笔记](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md)
 
 # Data Mining
 <br/>

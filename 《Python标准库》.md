@@ -3,8 +3,9 @@
 # 目录  
 
 - [第一章 文本](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第一章-文本)  
-- [第十章 进程与线程]()  
-- [第十六章 开发工具]()  
+- [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
+- [第七章 数据持久存储与交换]()  
+- [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 
 
 
@@ -117,6 +118,69 @@ In [5]: match.get_opcodes()
 Out[5]: [('insert', 0, 0, 0, 4), ('equal', 0, 1, 4, 5), ('replace', 1, 5, 5, 9)]
 
 ```  
+
+
+# 第七章 数据持久存储与交换  
+
+### 7.7 csv--逗号分隔值文件  
+- 7.7.1 读文件  
+读文件的时，输入数据的每一行都会解析，自动处理嵌在行字符串中的换行符，并转化为一个字符串list.
+```Python
+import csv
+import sys
+
+with open(sys.argv[1], 'rt') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print row
+```  
+
+- 7.7.2 写文件  
+使用writer()创建一个对象来写数据，然后使用writerow()迭代处理文本进行打印。  
+```Python
+import csv
+import sys
+
+with open(sys.argv[1], 'wt') as f:
+    writer = csv.writer(f)
+    writer.writerow(('Title 1', 'Title 2', 'Title 3'))
+
+print open(sys.argv[1], 'rt').read()
+Title 1, Title 2, Title 3
+
+#引号需要加入额外参数，这里给出包含非数值内容的列周围加引号
+writer = csv.writer(f, quoting=csv.QUOTE_NONNUMERIC)
+"Title 1", "Title 2", "Title 3"
+```  
+
+- 7.7.3 方言  
+由于用逗号分格文件有一定局限，可以将多个参数组在一起，构成一个方言(dialect)对象。  
+```Python
+# 示例一下注册方言，其他的用到再说  
+import csv 
+
+csv.register_dialect('pipes', delimiter='/')
+
+with open('testdata.pipes', 'r') as f:
+    reader = csv.reader(f, dialect='pipes')
+    for row in reader:
+        print row
+```  
+
+- 7.7.4 使用字段名  
+csv中可以将航作为字典处理，从而对字段命名。DictReader和DictWriter类将行转换为字典而不是列表。字典的键可以传入，也可以由第一行推导得出(如果行包含首部).  
+```Python
+# 示例一下注册方言，其他的用到再说  
+import csv 
+
+csv.register_dialect('pipes', delimiter='/')
+
+with open('testdata.pipes', 'r') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print row
+```  
+
 
 
 # 第十章 进程与线程  

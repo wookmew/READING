@@ -3,9 +3,20 @@
 # 目录  
 
 - [第一章 文本](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第一章-文本)  
+&emsp;- [1.1 string-文本常量和模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#11-string-文本常量和模块)  
+&emsp;- [1.2 textwrap---格式化文本段落](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#12-textwrap---格式化文本段落)  
+&emsp;- [1.4 difflib---比较序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#14-difflib---比较序列)  
+
+- [第六章 文件系统]()
+
+- [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
+&emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)
+
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
-- [第七章 数据持久存储与交换]()  
+&emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
+
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
+&emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹:)
 
 
 
@@ -118,6 +129,88 @@ In [5]: match.get_opcodes()
 Out[5]: [('insert', 0, 0, 0, 4), ('equal', 0, 1, 4, 5), ('replace', 1, 5, 5, 9)]
 
 ```  
+
+
+# 第六章 文件系统  
+
+### 6.1 os.path--平台独立的文件名管理  
+- 6.1.1 解析路径  
+路径解析依赖于os中定义的一些变量  
+&emsp;- os.sep--路径各部分之间的分隔符("/"or"\")  
+&emsp;- os.extsep--文件名与文件“扩展名”之间的分隔符(".")  
+&emsp;- os.pardir--路径中表示目录树上一级的部分("..")  
+&emsp;- os.curdir--路径中指示当前目录的部分(".")  
+os.path.split()函数将路径分解为两个单独的部分，并返回包含这些结果的一个tuple。这个tuple的第二个元素是路径的最后一部分，第一个元素则是最后这个部分之前的所有内容。  
+```Python
+In [5]: import os.path
+
+In [6]: for path in ['/one/two',
+   ...:              '/one/two/',
+   ...:              '/',
+   ...:              '.',
+   ...:              '']:
+   ...:     print '%s: %s'%(path, os.path.split(path))
+   ...:     
+/one/two: ('/one', 'two')
+/one/two/: ('/one/two', '')
+/: ('/', '')
+.: ('', '.')
+: ('', '') 
+```  
+os.path.basename()返回的值等价于os.path.split()值的第二部分，而os.path.basename()值则对应第一部分。  
+os.path.splitext()会根据扩展名分隔符来分割路径。  
+```Python  
+In [5]: import os.path
+
+In [8]: for path in ['f.txt',
+             'f',
+             '/s/f.txt',
+             'sss.',
+             '',]:
+    print '%s: %s'%(path, os.path.splitext(path))  
+f.txt: ('f', '.txt')
+f: ('f', '')
+/s/f.txt: ('/s/f', '.txt')
+sss.: ('sss', '.')
+: ('', '')
+```  
+os.path.commonprefix()可以获得所有路径中都出现的公共前缀，但这个前缀不一定存在。  
+
+- 6.1.2 建立路径  
+os.path.join()知道，目前用这个也够用了。  
+os.apth.expanduser()可以将波浪线(~)转换为用户主目录。如果找不到用户主目录，则字符串不做任何改动直接返回  
+os.path.expandvars()会扩展路径中出现的所有shell环境变量  
+
+- 6.1.3 规范化路径  
+os.path.normpath可以清除路径中多余的分隔符或相对路径。  
+```Python  
+In [9]: os.path.normpath('o/./123//')
+Out[9]: 'o/123'
+```  
+os.path.abspath()可以将一个相对路径转化为绝对路径  
+```Python  
+In [10]: os.path.abspath('/code')
+Out[10]: '/code'
+
+In [11]: os.path.abspath('./code')
+Out[11]: '/home/jblue13/code'
+
+In [12]: os.path.abspath('../code')
+Out[12]: '/home/code'
+```  
+
+- 6.1.4 文件时间  
+&emsp;- os.path.getatime()返回访问时间  
+&emsp;- ospath.getmtime()返回修改时间  
+&emsp;- os.path.getctime()返回创建时间  
+&emsp;- os.path.getsize()返回文件中的数据量，尝试了下对文件夹使用显示的都是4096(UNIX下)，推测只可以对文件使用。  
+
+- 6.1.5 测试文件  
+这一块方法比较多，自己有用过：os.path.isfile(), os.path.isdir(), os.path.exists(),其他用到了再说。  
+
+- 6.1.6 遍历一个目录树  
+介绍的os.path.walk()方法，但查阅了一些资料之后，os.walk()要更优一些。  
+os.walk明显比os.path.walk要简洁一些，起码它不需要回调函数，遍历的时候一目了然：root，subdirs，files。  
 
 
 # 第七章 数据持久存储与交换  
@@ -299,10 +392,39 @@ time.sleep(3)
 ```  
 
 
-
-
 # 第十六章 开发工具  
 
 ### 16.4 traceback---异常和栈轨迹  
 This module provides a standard interface to extract, format and print stack traces of Python programs. It exactly mimics the behavior of the Python interpreter when it prints a stack trace. This is useful when you want to print stack traces under program control, such as in a “wrapper” around the interpreter.  
- 
+- 16.4.2 处理异常  
+print_exc()使用sys.exc_info()来得到当前线程的异常信息，格式化结果，并把文本打印到一个文件句柄(默认为sys.stderr)。
+```Python
+import traceback
+import sys
+
+try:
+    xxx
+except Exception, err:
+    traceback.print_exc(file=sys.stdout)
+```  
+print_exc()是print_exception()缩写，使用它需要三个显示参数:**异常类型、异常值和traceback**，与之相似的是format_exception()，后者主要用于准备文本。
+```Python
+import traceback
+import sys
+
+try:
+    xxx
+except Exception, err:
+    exc_type, exc_value, exc_tb = sys.exc_info()
+    traceback.print_exception(exc_type, exc_value, exc_tb)
+
+try:
+    xxx
+except Exception, err:
+    exc_type, exc_value, exc_tb = sys.exc_info()
+    pprint(traceback.format_exception(exc_type, exc_value, exc_tb))
+```  
+traceback.extract_tb()返回值是一个项列表，每一项是一个元组，包括4部分：**源文件名、该文件中的行号、 函数名和该行的源文本**  
+
+- 16.4.3 处理栈  
+print_stack()是对当前调用栈而不是traceback完成的操作，会打印当前栈，而不是报错。与之对应的还有format_stack(),extrack_stack()类似于extract_tb()。

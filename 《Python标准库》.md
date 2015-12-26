@@ -7,7 +7,9 @@
 &emsp;- [1.2 textwrap---格式化文本段落](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#12-textwrap---格式化文本段落)  
 &emsp;- [1.4 difflib---比较序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#14-difflib---比较序列)  
 
-- [第六章 文件系统]()
+- [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
+&emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)
+&emsp;- [6.5.2 复制文件元数据]()  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
 &emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)
@@ -16,7 +18,7 @@
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
-&emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹:)
+&emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
 
 
 
@@ -211,6 +213,53 @@ Out[12]: '/home/code'
 - 6.1.6 遍历一个目录树  
 介绍的os.path.walk()方法，但查阅了一些资料之后，os.walk()要更优一些。  
 os.walk明显比os.path.walk要简洁一些，起码它不需要回调函数，遍历的时候一目了然：root，subdirs，files。  
+
+### 6.5 shutil--高级文件操作  
+
+- 6.5.1 复制文件  
+copyfilr()将源的内容复制到目标，如果没有权限写木匾文件则产生IOError  
+```Python  
+from shutil import * 
+
+copyfile('sss.py', 'sss.py.copy')
+```  
+copyfile()的实现使用了底层函数copyfileobj().copyfile()的参数是文件名，但copyfileobj()的参数是打开的文件句柄。还可以有第三个参数：用于读入块的一个缓冲区长度。默认是大数据块读取，使用-1会一次读入所有输入，使用正数可以设置特定的块大小。  
+类似于UNIX命令行工具cp，copy()函数会用同样的方式解释输出名。如果指定的目标指示一个目录而不是一个文件，会使用源文件的基名在该目录中穿件一个新文件。文件的权限会随内容复制  
+```Python  
+from shutil import * 
+import os
+
+os.mkdir('example')
+copyfile('sss.py', 'example')
+print os.listdir('example')
+
+['sss.py']
+```  
+copy2()的工作类似于copy(),不过复制到新文件的元数据中会包含访问和修改时间。
+
+- 6.5.2 复制文件元数据  
+默认地，在UNIX下创建一个新文件时，他会根据当前用户的umask接受权限。要把权限从一个文件复制到另一个文件，可以使用copymode().  
+copystat()智慧复制与文件关联的权限和日期。  
+
+- 6.5.3 处理目录树  
+shutil包含3个函数用来处理目录树。要把一个目录从一个位置复制到另一个位置，可以使用copytree，当然，目标目录不能已存在。  
+```Python  
+from shutil import * 
+
+copytree('../shutil', '/tmp/example')
+```  
+要删除一个目录及其中的内容，用rmtree()。默认地，错误会作为异常产生，不过如果第二个参数为true，就可以忽略这些异常。可以在第三个参数中提供一个特殊的错误处理函数。  
+```Python  
+from shutil import * 
+
+rmtree('/tmp/example')
+```  
+move()的语义与UNIX命令mv类似，如果源和目标都在同一个文件系统内，则会重命名源文件。否则，源文件会复制到目标文件，然后将源文件删除。  
+```Python  
+from shutil import * 
+
+move('example.txt', 'example.out')
+```  
 
 
 # 第七章 数据持久存储与交换  

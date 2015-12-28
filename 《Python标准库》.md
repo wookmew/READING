@@ -8,8 +8,9 @@
 &emsp;- [1.4 difflib---比较序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#14-difflib---比较序列)  
 
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
-&emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)
-&emsp;- [6.5.2 复制文件元数据]()  
+&emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
+&emsp;- [6.3 linecache--高效读取文件]()  
+&emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
 &emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)
@@ -20,7 +21,8 @@
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
 
-
+- [第十七章 运行时特性]()  
+&emsp;- [17.3 os--可移植访问操作系统特定特性]()
 
 # 第一章 文本  
 
@@ -212,7 +214,44 @@ Out[12]: '/home/code'
 
 - 6.1.6 遍历一个目录树  
 介绍的os.path.walk()方法，但查阅了一些资料之后，os.walk()要更优一些。  
-os.walk明显比os.path.walk要简洁一些，起码它不需要回调函数，遍历的时候一目了然：root，subdirs，files。  
+os.walk明显比os.path.walk要简洁一些，起码它不需要回调函数，遍历的时候一目了然：root，subdirs，files。 
+
+
+### 6.3 linecache--高效读取文件  
+
+- 6.3.1 获取全部文件  
+linecache.getlines(filename)  
+从名为filename的文件中得到全部内容，输出为列表格式，以文件每行为列表中的一个元素,并以linenum-1为元素在列表中的位置存储.  
+```Python  
+In [10]: linecache.getlines(fine)
+Out[10]: ['2\n', '3\n', '4\n', '5\n', '6\n', '67\n', 'tf wef\n', '234\n']
+```  
+**注意：使用linecache.getlines('a.txt')打开文件的内容之后，如果a.txt文件发生了改变，如你再次用linecache.getlines获取的内容，不是文件的最新内容，还是之前的内容，此时有两种方法：  
+1、使用linecache.checkcache(filename)来更新文件在硬盘上的缓存，然后在执行linecache.getlines('a.txt')就可以获取到a.txt的最新内容；  
+2、直接使用linecache.updatecache('a.txt')，即可获取最新的a.txt的最新内容  
+另：读取文件之后你不需要使用文件的缓存时需要在最后清理一下缓存，使linecache.clearcache()清理缓存，释放缓存。**  
+
+- 6.3.2 读取特定行  
+linecache.getline(filename,lineno)  
+从名为filename的文件中得到第lineno行。这个函数从不会抛出一个异常–产生错误时它将返回”（换行符将包含在找到的行里）。**如果文件没有找到，这个函数将会在sys.path搜索，即在标准库中查找。**  
+返回值通常在行末尾都包括一个换行符，所以如果文本行为空，那么返回值就是一个换行符。  
+
+- 6.3.5 读取Python源文件  
+linecache在生成traceback跟踪路径时使用相当频繁，其关键特性就是能够通过指定模块的基名在导入路径中查找Python源模块。  
+```Python  
+import linecache  
+import os  
+module_line = linecache.getline('linecache.py', 3)
+
+print repr(module_line)
+file_src = linecache.__file__  
+if file_src.endswith('.pyc'):
+    file_src = file_src[:-1]
+with open(file_src, 'r') as f:
+    file_line = f.readlines()[2]
+print repr(file_line)
+```  
+
 
 ### 6.5 shutil--高级文件操作  
 
@@ -476,4 +515,151 @@ except Exception, err:
 traceback.extract_tb()返回值是一个项列表，每一项是一个元组，包括4部分：**源文件名、该文件中的行号、 函数名和该行的源文本**  
 
 - 16.4.3 处理栈  
-print_stack()是对当前调用栈而不是traceback完成的操作，会打印当前栈，而不是报错。与之对应的还有format_stack(),extrack_stack()类似于extract_tb()。
+print_stack()是对当前调用栈而不是traceback完成的操作，会打印当前栈，而不是报错。与之对应的还有format_stack(),extrack_stack()类似于extract_tb()。  
+
+
+# 第十七章 运行时特性  
+
+### 17.3 os--可移植访问操作系统特定特性  
+
+- 17.3.1 进程所有者  
+```Python
+#!/usr/bin/env python
+# coding=utf-8
+import os
+
+TEST_GID = 501
+TEST_UID = 527
+
+def show_user_info():
+    print 'User (actual/effective): %d/%d'%\
+            (os.getuid(), os.geteuid())
+    print 'Group (actual/effective): %d/%d'%\
+            (os.getgid(), os.getegid())
+    print 'actual Groups : ', os.getgroups()
+    return 
+
+print 'Before CHANGE:'
+show_user_info()
+print 
+
+try:
+    os.setegid(TEST_GID)
+except OSError:
+    print 'ERROR: Could not vhange effective group. Return as root.'
+else:
+    print 'CHANGED GROUP:'
+    show_user_info()
+    print
+
+try:
+    os.setegid(TEST_UID)
+except OSError:
+    print 'ERROR: Could not vhange effective group. Return as root.'
+else:
+    print 'CHANGED USER:'
+    show_user_info()
+    print
+
+Before CHANGE:
+User (actual/effective): 1000/1000
+Group (actual/effective): 1000/1000
+actual Groups :  [4, 24, 27, 30, 46, 108, 124, 1000]
+
+ERROR: Could not vhange effective group. Return as root.
+ERROR: Could not vhange effective group. Return as root.
+```  
+可见，进程值并未改变，当然如果是sudo启动仅可以啦。  
+
+- 17.3.2 进程环境  
+环境中设置的变量作为字符串可见，这些字符串可以通过os.environ() or os.getenv()读取。  
+```Python
+In [1]: import os
+
+In [5]: os.environ
+Out[5]: {'USER': 'jblue13', 'MANDATORY_PATH': ...}
+
+In [6]: os.getenv
+Out[6]: <function os.getenv>
+```  
+
+- 17.3.3 进程工作目录  
+如果操作系统有层次结构的文件系统，会有一个“当前工作目录”的概念，使用相对路径访问文件时，进程将使用文件系统上的这个目录作为起始位置。当前目录可以用os.getcwd()获取，用os.chdir()改变。  
+```Python
+In [1]: import os
+
+In [8]: os.getcwd()
+Out[8]: '/home/jblue13'
+
+In [9]: os.pardir
+Out[9]: '..'
+
+In [10]: os.chdir(os.pardir)
+
+In [11]: os.getcwd()
+Out[11]: '/home'
+```  
+
+- 17.3.4 管道  
+这一块可以使用subprocess取代，最常用的管道函数是popen().它创建一个新进程运行指定命令，并根根据模式(mode)参数，为该进程的输入或输出关联一个流。  
+
+- 17.3.6 文件系统权限  
+关于文件的详细信息可以使用os.stat() or os.lstat()访问。  
+```Python
+In [1]: import os
+
+In [13]: os.stat('/home/')
+Out[13]: posix.stat_result(...)
+
+In [14]: os.lstat('/home/')
+Out[14]: posix.stat_result(...)
+```  
+在类UNIX的系统上，可以使用chmod()改变文件权限，只需传入模式(一个整数)。模式值可以使用stat模块中定义的常量来构造。  
+
+- 17.3.7 目录  
+创建一个目录可以使用os.mkdir(),所有父目录都必须已经存在。  
+用os.rmdir()删除一个目录时，实际上只会删除叶子目录(路径的最后一部分)。  
+os.makedirs()和os.removedirs()要处理路径中的所有节点。os.makedirs()会创建路径上所有不存在的部分，os.removedirs()将删除所有父目录(只要他们为空)。  
+
+- 17.3.8 符号链接  
+os.symlink(source, link_name)：为源文件source创建一个符号链接link_name。  
+```Python
+In [1]: import os
+
+In [16]: os.symlink('/home/jblue13/lol.py','/home/jblue13/ln_filename')  # 出现了名字为ln_filename一个快捷方式
+```  
+os.readlink()可以读取符号链接来确定由该链接指示的原始文件。  
+
+- 17.3.9 遍历目录树  
+walk(top, topdown=True, onerror=None, followlinks=False)  
+以自顶向下遍历目录树或者以自底向上遍历目录树，对每一个目录都返回一个三元组(dirpath, dirnames, filenames)。  
+dirpath - 遍历所在目录树的位置，是一个字符串对象  
+dirnames - 目录树中的子目录组成的列表，不包括("."和"..")  
+filenames - 目录树中的文件组成的列表  
+如果可选参数topdown = True或者没有指定，则其实目录的三元组先于其子目录的三元组生成(自顶向下生成三元组)，如果topdown = False，则起始目录的三元组在其子目录的三元组生成后才生成(自底向上生成三元组)。  
+当topdown = True，os.walk()函数会就地修改三元组中的dirnames列表(可能是使用del或者进行切片），然后再使用os.walk()递归地处理剩余在dirnames列表中的目录。这种方式有助于加快搜索效率，可以指定特殊的遍历顺序。当topdown = False的时候修改dirnames是无效的，因为在使用自底向上进行遍历的时候子目录的三元组是先于上一级目录的三元组创建的。  
+
+- 17.3.11 用os.fork()创建进程  
+win下无法用，作用是创建一个新进程,作为当前进程的一个克隆。创建之后，这两个进程运行同样的代码。程序要像分辨在哪一个进程中，需要检查fork()的返回值。如果值是0，当前进程是子进程；如果不是0，说明程序在父进程中运行。 返回值就是子进程的进程id。  
+父进程可以使用kill()和signal模块像子进程发送信号。  
+
+- 17.3.12 等待子进程  
+```Python
+wait(...)
+wait() -> (pid, status)
+    
+Wait for completion of a child process.
+```  
+
+- 17.3.13 Spawn  
+spawn()系列函数可以在一个语句中完成fork()和exec()处理。  
+
+- 17.3.14 文件系统权限  
+os.access(path, mode)：使用实际的uid和gid去测试路径的访问权。实际的uid和gid指的是用户登录到系统使用的uid和当前用户所在的gid，这和有效用户id和有效组id是有区别的，有效用户id和有效组id是对应于进程的。  
+mode参数指定测试路径的方式：  
+os.F_OK - 测试路径是否存在  
+os.R_OK - 测试文件是否可读  
+os.W_OK - 测试文件是否可写  
+os.X_OK - 测试文件是否可执行  
+其中的R_OK，W_OK，X_OK是可以使用OR操作合起来进行一起测试的。  
+函数返回True如果测试成功，否则返回False。在系统的C API中可以使用access系统调用。  

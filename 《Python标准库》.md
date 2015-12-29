@@ -9,7 +9,7 @@
 
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
-&emsp;- [6.3 linecache--高效读取文件]()  
+&emsp;- [6.3 linecache--高效读取文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#63-linecache--高效读取文件)  
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
@@ -21,8 +21,9 @@
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
 
-- [第十七章 运行时特性]()  
-&emsp;- [17.3 os--可移植访问操作系统特定特性]()
+- [第十七章 运行时特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十七章-运行时特性)  
+&emsp;- [17.2 sys--系统特定的配置]()
+&emsp;- [17.3 os--可移植访问操作系统特定特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#173-os--可移植访问操作系统特定特性)  
 
 # 第一章 文本  
 
@@ -519,6 +520,117 @@ print_stack()是对当前调用栈而不是traceback完成的操作，会打印�
 
 
 # 第十七章 运行时特性  
+
+### 17.2 sys--系统特定的配置  
+
+- 17.2.1 解释器设置  
+sys.hexversion     获取Python解释程序的版本值，16进制格式如：0x020403F0  
+sys.version        获取Python解释程序的版本信息   
+sys.api_version    解释器的C的API版本   
+sys.version_info   版本信息  
+sys.subversion     获取解释器  
+sys.platform       返回操作系统平台名称   
+sys.flags          获取命令行的参数  
+sys.displayhook    每次进入Ipython，都会先调用这个  
+sys.executable     获取Python解释程序路径   
+sys.prefix         指示解释器安装的父目录  
+sys.getwindowsversion()      获取Windows的版本   
+sys.getdefaultencoding()     得到解释器的默认编码值。  
+**ps：这个值在启动时由site设置，它会调用sys.setdefaultencoding(),然后从sys的命名空间将其删除。  
+sys.getfilesystemencoding()  会返回一个操作系统特定的值.  
+```Python
+In [1]: import sys
+
+In [2]: sys.version
+Out[2]: '2.7.6 (default, Jun 22 2015, 17:58:13) \n[GCC 4.8.2]'
+
+In [3]: sys.hexversion
+Out[3]: 34014960
+
+In [4]: sys.api_version
+Out[4]: 1013
+
+In [5]: sys.version_info
+Out[5]: sys.version_info(major=2, minor=7, micro=6, releaselevel='final', serial=0)
+
+In [6]: sys.subversion
+Out[6]: ('CPython', '', '')
+
+In [9]: sys.platform
+Out[9]: 'linux2'
+
+In [10]: sys.flags
+Out[10]: sys.flags(debug=0, py3k_warning=0, division_warning=0, division_new=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=0, no_user_site=0, no_site=0, ignore_environment=0, tabcheck=0, verbose=0, unicode=0, bytes_warning=0, hash_randomization=0)
+In [11]: sys.flags.debug
+Out[11]: 0
+
+In [13]: sys.getdefaultencoding()
+Out[13]: 'ascii'
+
+In [14]: sys.getfilesystemencoding()
+Out[14]: 'UTF-8'
+
+In [15]: sys.displayhook
+Out[15]: <IPython.core.displayhook.DisplayHook at 0x7fb8ffe63150>  
+
+In [17]: sys.executable
+Out[17]: '/usr/bin/python'
+
+In [18]: sys.prefix
+Out[18]: '/usr'
+
+```  
+
+- 17.2.2 运行时环境  
+sys.argv       可以获得外部的命令行参数  
+sys.stdout     标准输出  
+sys.stdin      标准输入   
+sys.stderr     错误输出  
+sys.exit(n)    退出程序，正常退出时exit(0)  
+
+- 17.2.3 内存管理和限制  
+python使用引用计数(reference counting)和垃圾回收(garbage collection)来完成自动内存管理。一个对象的引用数降至0时，他会自动标志为回收。要查看一个现有对象的引用数,可使用**sys.getrefcount()**.  
+sys.getsizeof()可以获知一个对象有多少引用，从而帮助发现环或内存泄漏。  
+对于一个类所用的空间，要得到更全面的估计，模块提供一个__sizeof__()方法来计算这个值，它会累计一个对象各个属性的大小。  
+```Python
+import sys
+
+class WithAttributes(object):
+    def __init__(self):
+        self.a = 'a'
+        self.b = 'b'
+        return
+
+    def __sizeof__(self):
+        return object.__sizeof__(self) + \
+            sum(sys.getsizeof(v) for v in self.__dict__.values())
+```  
+这个版本将对象的基本大小加上存储在内部__dict__中的所有属性的大小来计算对象大小。  
+python应用中允许无限递归，可能会引入解释器本身的栈溢出，导致崩溃。为了消除这种情况，可使用sys.setrecursionlimit()和sys.getrecursionlimit().  
+sys.maxint     最大的Int值
+sys.maxint     是列表、字典、串、或C解释器中size类型指示的其他数据结构的最大大小。  
+sys.maxint     当前配置的解释器支持的最大证书Unicode值。  
+sys.float_info 包含解释器所用的浮点数类型表示(基于底层系统的float实现)  
+
+- 17.2.4 异常处理  
+sys.excepthook()设置为一个函数，它有3个参数(错误类型、错误值和traceback).
+sys.exc_info()用来获取线程的当前异常，返回值是一个包含3个成员的元组，其中包含异常类、异常实例和traceback。它是线程安全的  
+
+- 17.2.5 底层线程支持  
+Python存在GIL，字节码执行一个固定的间隔暂停，解释器则检查是否需要执行某个信号处理器。在这个间隔检查期间，当前线程会释放GIL，然后重新请求，使其他线程有机会先获得这个锁来得到执行权。  
+默认的检查间隔是100字节码，可以用**sys.getcheckinterval()**得到当前值，用**sys.setcheckinterval()**改变这个间隔(慎用！！！)。  
+**sys._current_frames()**能准确地显示出线程在哪里停止。  
+
+- 17.2.6 模块和导入  
+sys.modules是一个字典，将所导入模块的名字映射为包含具体代码的模块对象。  
+sys.builtin_module_names可以导入内置模块  
+
+- 17.2.7 跟踪程序运行情况  
+有两种方式注入代码，来监视一个程序的运行，包括跟踪(tracing)和性能分析(profiling)。监视一个程序最容易也最低效的方法是通过一个跟踪hook(trace hook),可以用它来编写一个调试工具、监视代码覆盖或其他的目的。  
+可以向sys.settrace()传递一个回调函数修改跟踪hook.这个回调接收3个函数：所运行代码的栈帧、命名通知类型的串，以及一个事件特定的参数值。  
+使用hook的另一种有用的方法是跟踪正在调用哪些函数，以及它们的返回值是什么。要监视返回值，可以见识return事件。  
+
+
 
 ### 17.3 os--可移植访问操作系统特定特性  
 

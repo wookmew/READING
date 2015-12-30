@@ -13,6 +13,7 @@
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
+&emsp;- [7.1 pickle--对象串行化]()  
 &emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
@@ -22,7 +23,7 @@
 &emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
 
 - [第十七章 运行时特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十七章-运行时特性)  
-&emsp;- [17.2 sys--系统特定的配置]()
+&emsp;- [17.2 sys--系统特定的配置](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#172-sys--系统特定的配置)  
 &emsp;- [17.3 os--可移植访问操作系统特定特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#173-os--可移植访问操作系统特定特性)  
 
 # 第一章 文本  
@@ -304,7 +305,30 @@ move('example.txt', 'example.out')
 
 # 第七章 数据持久存储与交换  
 
+### 7.1 pickle--对象串行化  
+pickle模块实现了一个算法可以将一个任意的Python对象转换为一系列字节。这个过程也称为串行化对象。表示对象的字节流可以传输或存储，然后重新构造来创建有相同性质的新对象。(注意用cPickle,方法是一样的)  
+
+- 7.1.1 导入  
+```Python  
+try:
+    import cPickle as pickle
+except:
+    import pickle
+```  
+
+- 7.1.2 编码和解码字符串数据  
+**pickle.dumps()**将一个数据结构编码为一个字符串，默认情况下，pickle只包含ASCII字符。  
+数据串行化后，可以写到一个文件、套接字或者管道等等，用**pickle.loads()**.
+
+- 7.1.3 处理流  
+pickle对于进程间通信也很方便，如：os.fork()和os.pipe()可以用来建立工作进程，从一个管道读取作业指令，并把结果写至另一个管道。管理工作线程池以及发送作业和接收响应的核心代码可以重用。  
+
+- 7.1.5 不可pickle的对象  
+套接字、文件句柄、数据库连接以及其他运行时状态依赖于操作系统或其他进程的对象可能无法用一种有意义的方式保存。此时可以用__getstate__()和__setstate__()来返回可pickle实例状态的一个子集。新式的类还可以定义__getnewargs__()，这会返回要传至类内存分配器(C.__new__())的参数。    
+
+
 ### 7.7 csv--逗号分隔值文件  
+
 - 7.7.1 读文件  
 读文件的时，输入数据的每一行都会解析，自动处理嵌在行字符串中的换行符，并转化为一个字符串list.
 ```Python

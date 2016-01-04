@@ -13,11 +13,15 @@
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
-&emsp;- [7.1 pickle--对象串行化]()  
+&emsp;- [7.1 pickle--对象串行化](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#71-pickle--对象串行化)  
 &emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
+&emsp;- [10.4 multiprooessing--像线程一样管理进程]()  
+
+- [第十四章 应用构建模块]()  
+&emsp;- [14.7 shlex--解析shell]()  
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
@@ -25,6 +29,7 @@
 - [第十七章 运行时特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十七章-运行时特性)  
 &emsp;- [17.2 sys--系统特定的配置](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#172-sys--系统特定的配置)  
 &emsp;- [17.3 os--可移植访问操作系统特定特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#173-os--可移植访问操作系统特定特性)  
+
 
 # 第一章 文本  
 
@@ -503,6 +508,234 @@ sys.stdout.flush()
 os.killpg(proc.pid, signal.SIGUSR1)
 time.sleep(3)
 ```  
+
+
+### 10.4 multiprooessing--像线程一样管理进程  
+
+- 10.4.1 multiprocessing基础  
+```Python
+import multiprocessing 
+
+def worker(num):
+    print 'worker;', num
+    return 
+
+if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = multiprocessing.Process(target=worker, args=(i,))
+        jobs.append(p)
+        p.start()
+
+worker; 0
+worker; 1
+worker; 2
+worker; 3
+worker; 4
+```  
+
+- 10.4.2 可导入的目标函数  
+threading与multiprocessing例子之间有一个区别，multiprocessing对__main__使用了额外的保护。由于新进程启动的方式，要求子进程能够导入包含目标函数的脚本。可以将应用的主要部分包装在一个__mian__检查中，确保模块导入时不会在各个子进程中递归运行。  
+
+- 10.4.3 确定当前进程  
+每个Process实例都有一个名称，其默认值可以在创建进程时改变。  
+```Python
+import multiprocessing 
+import time 
+
+def worker():
+    name = multiprocessing.current_process().name
+    print name, 'Staring'
+    time.sleep(2)
+    print name, 'Exiting'
+
+def my_service():
+    name = multiprocessing.current_process().name
+    print name, 'Starting'
+    time.sleep(3)
+    print name, 'Exiting'
+
+if __name__ == '__main__':
+    service = multiprocessing.Process(name='my_service', target=my_service)
+    worker_1 = multiprocessing.Process(name='worker 1', target=worker)
+    worker_2 = multiprocessing.Process(target=worker)
+
+    worker_2.start()
+    worker_1.start()
+    service.start()
+
+Process-3 Staring
+worker 1 Staring
+my_service Starting
+worker 1 Exiting
+Process-3 Exiting
+my_service Exiting
+```  
+
+- 守护进程  
+```Python
+import multiprocessing 
+import time 
+import sys 
+
+def daemon():
+    p = multiprocessing.current_process()
+    print 'Staring:', p.name, p.pid
+    sys.stdout.flush()
+    time.sleep(2)
+    print 'Exiting:', p.name, p.pid
+    sys.stdout.flush()  
+
+def non_demon():
+    p = multiprocessing.current_process()
+    print 'Staring:', p.name, p.pid
+    sys.stdout.flush()
+    print 'Exiting:', p.name, p.pid
+    sys.stdout.flush()  
+
+if __name__ == '__main__':
+    d = multiprocessing.Process(name='daemon', target=daemon)
+    d.daemon = True
+
+    n = multiprocessing.Process(name='non-daemon', target=non_demon)
+    n.daemon = False
+
+    d.start()
+    time.sleep(1)
+    n.start()
+
+Staring: daemon 26180
+Staring: non-daemon 26184
+Exiting: non-daemon 26184
+```  
+守护进程会在主程序退出之前自动终止，以避免留下“孤”进程继续运行。  
+
+- 10.4.5 等待进程  
+要等待一个进程完成工作并退出，可以使用join()方法。默认情况下，join()会无限阻塞。可以传入
+一个超时参数。即使进程在这个超时期限内没有完成，join()也会返回。PS：**如果传入的超时值小于守护进程睡眠的时间，所以join()返回之后这个进程仍“存活”**  
+
+- 10.4.6 终止进程  
+如果一个进程看起来已经挂起或陷入死锁，则需要能够强制将其结束，即对一个进程对象调用terminare()。  
+```Python
+import multiprocessing 
+
+if __name__ == '__main__':
+    d = multiprocessing.Process(target=slow_worker)
+    
+    d.start()
+    d.terminate()
+    d.join()
+```  
+注意：**终止进程后要使用join()退出进程，使进程管理代码有时间更新对象的状态。**  
+
+- 10.4.7 进程退出状态  
+| 退出码 | 含义   
+| ------ | --------------------------------  
+| ==0    | 未生成任何错误  
+| >0     | 进程有一个错误，并以该错误码退出  
+| <0     | 进程有一个-1*exitcode信号结束  
+
+- 10.4.8 日志  
+multiprocessing.log_to_stderr()使用logging建立一个日志记录器对象，并增加一个处理程序，使得日志消息将发送到标准错误通道。  
+
+- 10.4.9 派生进程  
+```Python
+import multiprocessing 
+
+class Worker(multiprocessing.Process):
+
+    def run(self):
+        print 'In %S'% self.name 
+        return 
+
+if __name__ == '__main__':
+    jobs = []
+    for i in range(5):
+        p = Worker()
+        jobs.append(p)
+        p.start()
+    for j in jobs:
+        j.join()
+```  
+
+- 10.4.10 向进程传递消息  
+multiprocessing.Queue()来回递消息。  
+
+- 10.4.11 进程间信号传输  
+Event类，通过使用一个可选的超时值，事件对象可以等待其状态从未设置变为设置。  
+
+- 10.4.14 控制资源的并发访问  
+创建一个连接池，Manager创建的特殊类型列表对象集中维护活动进程列表,Manager负责协调其所有用户之间的共享信息状态。除了列表和字典之外，Manager还可以创建一个共享Namespace。  
+
+- 10.4.17 进程池  
+Pool类来管理固定数目的工作进程，pool参数包括进程数以及启动任务进程时要进行的函数.pool.map()方法等价于内置map()，只不过单个任务会并行运行。
+
+
+# 第十四章 应用构建模块  
+
+### 14.7 shlex--解析shell  
+- 加引号的字符串
+```Python
+In [1]: import shlex
+
+In [2]: s = 'This string has embedded "double quotes" and \'single quotes\' in it,\nand even "a \'nested example\'".\n'
+
+In [6]: for i in a:
+   ...:     print repr(i)
+   ...:     
+'This'
+'string'
+'has'
+'embedded'
+'"double quotes"'
+'and'
+"'single quotes'"
+'in'
+'it'
+','
+'and'
+'even'
+'"a \'nested example\'"'
+'.'
+```  
+
+- 14.7.2 嵌入注释  
+默认情况下，#后面的文本会认为是注释的一部分，并被忽略。由于解析器的特点，它只支持单字符注释前缀。可以通过commenters属性配置使用的注释字符集。  
+
+- 14.7.3 分解  
+要把一个现有字符串分解为其组成token，可使用便利函数split()。  
+```Python
+In [1]: import shlex
+
+In [2]: s = 'This string has embedded "double quotes" and \'single quotes\' in it,\nand even "a \'nested example\'".\n'
+
+In [7]: shlex.split(s)
+Out[7]: 
+['This',
+ 'string',
+ 'has',
+ 'embedded',
+ 'double quotes',
+ 'and',
+ 'single quotes',
+ 'in',
+ 'it,',
+ 'and',
+ 'even',
+ "a 'nested example'."]
+
+##或许这是一个小技巧来的##
+>>> subprocess.Popen(shlex.split('ls -l'))  
+total 8
+-rw-r--r--. 1 root root 324 Sep  8 07:15 shlex_one.py
+-rw-r--r--. 1 root root  99 Sep  8 07:16 text.str
+```  
+
+- 14.7.4 包含其他Token源  
+shlex类包括很多配置属性来控制其行为。source属性可以启用代码(或配置)重用特性，允许一个token流包含另一个token流。  
+
+- 14.7.5 控制解析器  
+可以设置quotes字符来使用额外或替代引号。每个引号必须是单个字符，所以不可能有不同的开始和结束引号。  
 
 
 # 第十六章 开发工具  

@@ -18,12 +18,14 @@
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
-&emsp;- [10.4 multiprooessing--像线程一样管理进程]()  
+&emsp;- [10.4 multiprooessing--像线程一样管理进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#104-multiprooessing--像线程一样管理进程)  
 
-- [第十四章 应用构建模块]()  
-&emsp;- [14.7 shlex--解析shell]()  
+- [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
+&emsp;- [14.7 shlex--解析shell](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#147-shlex--解析shell)  
+&emsp;- [14.9 日志--报告状态、错误和信息消息]()  
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
+&emsp;- [16.3 unittest--自动测试框架]()
 &emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
 
 - [第十七章 运行时特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十七章-运行时特性)  
@@ -738,10 +740,82 @@ shlex类包括很多配置属性来控制其行为。source属性可以启用代
 可以设置quotes字符来使用额外或替代引号。每个引号必须是单个字符，所以不可能有不同的开始和结束引号。  
 
 
+### 14.9 日志--报告状态、错误和信息消息  
+
+- 14.9.2 记入文件  
+basicConfig()函数建立默认处理器。  
+
+- 14.9.3 旋转日志文件  
+想每次程序运行时创建一个新文件，可以向basicConfig()的参数filemode传入值“w”，有更好的做法是使用一个RotatingFileHandler，它会自动创建新文件，同时保留原来的日志文件。  
+```Python
+import glob
+import logging
+import logging.handlers 
+
+log_file = 'lol.out'
+
+my_logger = logging.getLogger('MyLogger')
+my_logger.setLevel(logging.DEBUG)
+
+handler = logging.handlers.RotatingFileHanler(log_file,
+                                              maxBytes=20,
+                                              backupCount=5,)
+
+my_logger.addHandler(handler)
+
+for i in range(20):
+    my_logger.debug('i=%d'%i)
+
+logfiles = glob.glob('%s*'%log_file)
+for filename in logfiles:
+    print filename
+```  
+
+
+
 # 第十六章 开发工具  
+
+### 16.3 unittest--自动测试框架  
+
+- 16.3.1 基本测试结构  
+```Python
+import unittest
+
+class SimplisticTest(unittest.TestCase):
+    
+    def test(self):
+        self.failUnless(True)
+
+#运行是加上-v，可以查看用时
+if __name__ == "__main__":
+    unittest.main()
+```  
+
+- 16.3.4 断言真值  
+```Python
+import unittest
+
+class TruthTest(unittest.TestCase):
+    
+    def testFailUnless(self):
+        self.failUnless(True)
+    def testAssertTrue(self):
+        self.assertTrue(True)
+
+    def testFailIf(self):
+        self.failIf(True)
+    def testAssertFalse(self):
+        self.assertFalse(False)
+
+if __name__ == "__main__":
+    unittest.main()
+```  
+
+
 
 ### 16.4 traceback---异常和栈轨迹  
 This module provides a standard interface to extract, format and print stack traces of Python programs. It exactly mimics the behavior of the Python interpreter when it prints a stack trace. This is useful when you want to print stack traces under program control, such as in a “wrapper” around the interpreter.  
+
 - 16.4.2 处理异常  
 print_exc()使用sys.exc_info()来得到当前线程的异常信息，格式化结果，并把文本打印到一个文件句柄(默认为sys.stderr)。
 ```Python

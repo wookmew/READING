@@ -14,7 +14,10 @@
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
 &emsp;- [7.1 pickle--对象串行化](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#71-pickle--对象串行化)  
-&emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)
+&emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)  
+
+- [第八章 数据压缩与归档]()  
+&emsp;- [8.5 zipfile--ZIP归档访问]()
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
@@ -22,10 +25,10 @@
 
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
 &emsp;- [14.7 shlex--解析shell](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#147-shlex--解析shell)  
-&emsp;- [14.9 日志--报告状态、错误和信息消息]()  
+&emsp;- [14.9 日志--报告状态、错误和信息消息](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#149-日志--报告状态错误和信息消息)  
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
-&emsp;- [16.3 unittest--自动测试框架]()
+&emsp;- [16.3 unittest--自动测试框架](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#163-unittest--自动测试框架)  
 &emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
 
 - [第十七章 运行时特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十七章-运行时特性)  
@@ -394,6 +397,77 @@ with open('testdata.pipes', 'r') as f:
         print row
 ```  
 
+
+# 第八章 数据压缩与归档  
+
+### 8.5 zipfile--ZIP归档访问  
+
+- 8.5.1 测试ZIP文件  
+is_Zipfile()函数返回一个bool值进行判断  
+
+- 8.5.2 从归档读取元数据  
+```Python
+import Zipfile
+
+with zipfile.ZipFile('example.zip', 'r') as zf:
+    print zf.namelist()  # 以list形式返回压缩文件中的文件
+```  
+infolist()或getinfo()可以获得更多信息  
+
+- 8.5.3 从归档抽取归档文件  
+从一个归档成员中访问数据，可以使用read()方法。  
+
+- 8.5.4 创建新归档  
+```Python
+from zipfile_infolist import print_info
+import zipfile
+
+with zipfile.ZipFile('write.zip', mode='w') as zf:
+    zf.write('README.txt')  # 此处README.txt是一个文件
+
+print_info('write.zip')
+```  
+想要增加压缩，需要用zlib模块。若zlib可用，可使用zipfile.ZIP_DEFLATED设置单个文件的压缩模式。  
+```Python
+from zipfile_infolist import print_info
+import zipfile
+
+try:
+    import zlib
+    compression = zipfile.ZIP_DEFLATED
+except:
+    compression = zipfile.ZIP_STORED
+
+modes = { zipfile.ZIP_DEFLATED: 'deflated',
+          zipfile.ZIP_STORED: 'stored',
+}
+
+with zipfile.ZipFile('write.zip', mode='w') as zf:
+    mode_name = modes[compression]
+    zf.write('README.txt', compress_type=compression)
+
+print_info('write.zip')
+```  
+- 8.5.6 从非文件源写数据  
+有时，数据并不是一个文件，可以用writestr()直接向归档写入一个字节串。  
+```Python
+from zipfile_infolist import print_info
+import zipfile
+
+msg = 'lol lol lol'
+
+with zipfile.ZipFile('write.zip', mode='w', 
+                      compression= zipfile.ZIP_DEFLATED,) as zf:
+    zf.writestr('README.txt', msg)
+
+print_info('write.zip')
+```  
+
+- 8.5.7 利用Zipinfo实例写  
+可向writestr()传递一个ZipInfo实例，来定义修改日期和其他元数据。  
+
+- 8.5.8 追加到文件  
+mode='a'即可。  
 
 
 # 第十章 进程与线程  

@@ -10,14 +10,16 @@
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
 &emsp;- [6.3 linecache--高效读取文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#63-linecache--高效读取文件)  
+&emsp;- [6.4 tempfile--临时文件系统对象]()  
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
 &emsp;- [7.1 pickle--对象串行化](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#71-pickle--对象串行化)  
 &emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)  
 
-- [第八章 数据压缩与归档]()  
-&emsp;- [8.5 zipfile--ZIP归档访问]()
+- [第八章 数据压缩与归档](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第八章-数据压缩与归档)  
+&emsp;- [8.4 tarfile--Tar归档访问]()  
+&emsp;- [8.5 zipfile--ZIP归档访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#85-zipfile--zip归档访问)  
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
@@ -29,7 +31,8 @@
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.3 unittest--自动测试框架](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#163-unittest--自动测试框架)  
-&emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)
+&emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)  
+&emsp;- [16.6 pdb--交互式调试工具]()
 
 - [第十七章 运行时特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十七章-运行时特性)  
 &emsp;- [17.2 sys--系统特定的配置](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#172-sys--系统特定的配置)  
@@ -265,6 +268,42 @@ print repr(file_line)
 ```  
 
 
+### 6.4 tempfile--临时文件系统对象  
+
+- 6.4.1 临时文件  
+TemporaryFile()函数会创建文件，该文件会在关闭时自动删除。ps:TemporaryFile()返回的文件没有文件名  
+```Python  
+import tempfile
+
+temp = tempfile.TemporaryFile()
+```  
+默认地，文件句柄采用模式'w+b'，写文件之后，必须使用seek()"回转"文件句柄。  
+```Python  
+import tempfile
+
+with tempfile.TemporaryFile() as temp:
+    temp.write('some data')
+    temp.seek(0)
+    print temp.read()
+
+with tempfile.TemporaryFile(mode='w+t') as f:
+    f.writelines(['first\n', 'second\n'])
+    f.seek(o)
+
+    for line in f:
+        print line.rstrip()
+```  
+
+- 6.4.2 命名文件  
+NamedTemporaryFile()函数会创建一个文件，但不会断开其连接，可以用name属性访问到。  
+
+- 6.4.3 临时文件  
+mkdtemp()创建一个临时目录，并打开该目录中的所有文件。  
+
+- 6.4.5 临时文件位置  
+如果没使用dir参数指定明确的位置，则gettempdir()返回包含所有临时文件的默认目录，gettempprefix()返回新文件和目录名的字符串前缀。  
+
+
 ### 6.5 shutil--高级文件操作  
 
 - 6.5.1 复制文件  
@@ -399,6 +438,10 @@ with open('testdata.pipes', 'r') as f:
 
 
 # 第八章 数据压缩与归档  
+
+### 8.4 tarfile--Tar归档访问  
+和zipfile很相似，测试、读取、写入、追加等，虽然调用的函数名不一样，但逻辑是一样的，可以是对文件夹进行操作。
+
 
 ### 8.5 zipfile--ZIP归档访问  
 
@@ -922,6 +965,13 @@ traceback.extract_tb()返回值是一个项列表，每一项是一个元组，�
 
 - 16.4.3 处理栈  
 print_stack()是对当前调用栈而不是traceback完成的操作，会打印当前栈，而不是报错。与之对应的还有format_stack(),extrack_stack()类似于extract_tb()。  
+
+### 16.6 pdb--交互式调试工具  
+> 本章已做过学习  
+
+- 16.6.1 启动调试工具  
+调试失败后称为事后剖析调试，pdb通过pm()和post_mortem()函数支持事后剖析调试。  
+
 
 
 # 第十七章 运行时特性  

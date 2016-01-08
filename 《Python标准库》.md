@@ -7,10 +7,13 @@
 &emsp;- [1.2 textwrap---格式化文本段落](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#12-textwrap---格式化文本段落)  
 &emsp;- [1.4 difflib---比较序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#14-difflib---比较序列)  
 
+- [第二章 数据结构]()  
+&emsp;- [2.1 collections--容器数据类型]()  
+
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
 &emsp;- [6.3 linecache--高效读取文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#63-linecache--高效读取文件)  
-&emsp;- [6.4 tempfile--临时文件系统对象]()  
+&emsp;- [6.4 tempfile--临时文件系统对象](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#64-tempfile--临时文件系统对象)  
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
@@ -18,7 +21,7 @@
 &emsp;- [7.7 csv--逗号分隔值文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#77-csv--逗号分隔值文件)  
 
 - [第八章 数据压缩与归档](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第八章-数据压缩与归档)  
-&emsp;- [8.4 tarfile--Tar归档访问]()  
+&emsp;- [8.4 tarfile--Tar归档访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#84-tarfile--tar归档访问)  
 &emsp;- [8.5 zipfile--ZIP归档访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#85-zipfile--zip归档访问)  
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
@@ -32,7 +35,7 @@
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.3 unittest--自动测试框架](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#163-unittest--自动测试框架)  
 &emsp;- [16.4 traceback---异常和栈轨迹](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#164-traceback---异常和栈轨迹)  
-&emsp;- [16.6 pdb--交互式调试工具]()
+&emsp;- [16.6 pdb--交互式调试工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#166-pdb--交互式调试工具)  
 
 - [第十七章 运行时特性](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十七章-运行时特性)  
 &emsp;- [17.2 sys--系统特定的配置](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#172-sys--系统特定的配置)  
@@ -146,8 +149,108 @@ In [4]: match = SequenceMatcher(None, t1, t2)
 
 In [5]: match.get_opcodes()
 Out[5]: [('insert', 0, 0, 0, 4), ('equal', 0, 1, 4, 5), ('replace', 1, 5, 5, 9)]
-
 ```  
+
+
+# 第二章 数据结构  
+
+### 2.1 collections--容器数据类型  
+
+- 2.1.1 Counter  
+Counter作为一个容器，可以跟踪相同的值增加了多少次。这个类可以用来实现其他语言中常用包(bag)或多集合(multiest)数据结构来实现算法。  
+构造一个空Counter,然后通过update()方法填充。  
+```Python
+In [1]: import collections
+
+In [2]: c = collections.Counter()
+
+In [3]: c
+Out[3]: Counter()
+
+In [4]: c.update(a=1)
+
+In [5]: c
+Out[5]: Counter({'a': 1})
+```  
+elements()方法返回一个迭代器，将生成Counter知道的所有元素。ps:不保证元素顺序不变  
+```Python
+In [6]: c = collections.Counter('happy coding')
+
+In [7]: list(c.elements())
+Out[7]: ['a', ' ', 'c', 'd', 'g', 'i', 'h', 'o', 'n', 'p', 'p', 'y']
+```  
+most_common()可以生成一个序列，其中包含n个最常遇到的输入值及其相对应计数。  
+```Python
+In [6]: c = collections.Counter('happy coding')
+
+In [8]: c.most_common(3)
+Out[8]: [('p', 2), ('a', 1), (' ', 1)]
+
+In [9]: c.most_common()  #不提供参数会形成一个list给出
+Out[9]: 
+[('p', 2),
+ ('a', 1),
+ (' ', 1),
+ ('c', 1),
+ ('d', 1),
+ ('g', 1),
+ ('i', 1),
+ ('h', 1),
+ ('o', 1),
+ ('n', 1),
+ ('y', 1)]
+```  
+Counter实例支持算术和集合操作来完成结果的聚集。  
+
+- 2.1.2 defaultdict  
+collections.defaultdict会返回一个类似dictionary的对象，注意是类似的对象，不是完全一样的对象。这个defaultdict和dict类，几乎是一样的，除了它重载了一个方法和增加了一个可写的实例变量。collections.defaultdict(list)和dict.setdefault()等价，但是要更快。并且defaultdict可以利用工厂函数，给初始key带来一个默认值。  
+
+- 2.1.3 deque  
+deque支持从任意一端增加和删除函数。更为常用的两种结构，即栈和队列。PS:deque是线程安全的。  
+append()从右侧添加,appendleft()从左侧添加。pop()从右侧删除,popleft()从左侧添加。extend等同理.  
+```Python
+In [1]: import collections
+
+In [2]: d = collections.deque('o')
+
+In [3]: d.append('l')
+
+In [4]: d
+Out[4]: deque(['o', 'l'])
+
+In [5]: d.appendleft('l')
+
+In [6]: d
+Out[6]: deque(['l', 'o', 'l'])
+
+In [7]: d.
+d.append      d.count       d.maxlen      d.remove      
+d.appendleft  d.extend      d.pop         d.reverse     
+d.clear       d.extendleft  d.popleft     d.rotate   
+```  
+deque可以向任意一个方向旋转，可以理解为拨号盘。  
+```Python
+In [10]: d = collections.deque(xrange(10))
+
+In [11]: d
+Out[11]: deque([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+In [12]: d.rotate(2)
+
+In [13]: d
+Out[13]: deque([8, 9, 0, 1, 2, 3, 4, 5, 6, 7])
+
+In [14]: d.rotate(-4)
+
+In [15]: d
+Out[15]: deque([2, 3, 4, 5, 6, 7, 8, 9, 0, 1]) 
+```  
+
+- 2.1.4 namedtuple  
+namedtuple除了指定数值索引外，还会指定名字。  
+
+- 2.1.5 OrderedDict  
+常规dict不跟踪插入顺序，OrderedDict中则相反，它会记住元素插入的顺序，并在创建迭代器时使用这个顺序。  
 
 
 # 第六章 文件系统  

@@ -7,8 +7,13 @@
 &emsp;- [1.2 textwrap---格式化文本段落](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#12-textwrap---格式化文本段落)  
 &emsp;- [1.4 difflib---比较序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#14-difflib---比较序列)  
 
-- [第二章 数据结构]()  
-&emsp;- [2.1 collections--容器数据类型]()  
+- [第二章 数据结构](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第二章-数据结构)  
+&emsp;- [2.1 collections--容器数据类型](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#21-collections--容器数据类型)  
+&emsp;- [2.2 array--固定类型数据序列]()  
+
+- [第三章 算法]()  
+&emsp;- [3.2 itertools--迭代器函数]()  
+
 
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
@@ -251,6 +256,122 @@ namedtuple除了指定数值索引外，还会指定名字。
 
 - 2.1.5 OrderedDict  
 常规dict不跟踪插入顺序，OrderedDict中则相反，它会记住元素插入的顺序，并在创建迭代器时使用这个顺序。  
+
+
+### 2.2 array--固定类型数据序列  
+
+- 2.2.1 init  
+```Python
+In [3]: import array
+
+In [5]: s = 'this is'
+
+In [6]: a = array.array('c', s)
+
+In [7]: a
+Out[7]: array('c', 'this is')
+```  
+
+- 2.2.2 处理数组  
+```Python
+In [8]: a = array.array('i', xrange(3))
+
+In [9]: a
+Out[9]: array('i', [0, 1, 2])
+
+In [10]: a.extend(xrange(3))
+
+In [11]: a
+Out[11]: array('i', [0, 1, 2, 0, 1, 2])
+
+In [12]: a[2:5]
+Out[12]: array('i', [2, 0, 1])
+
+In [13]: list(enumerate(a))
+Out[13]: [(0, 0), (1, 1), (2, 2), (3, 0), (4, 1), (5, 2)]
+
+In [14]: list(a)
+Out[14]: [0, 1, 2, 0, 1, 2]
+```  
+
+- 2.2.3 数组与文件  
+```Python
+import array
+import binascii
+import tempfile
+
+a = array.array('i', xrange(5))
+
+output = tempfile.NamedTemporaryFile()
+a.tofile(output.file)
+output.flush()
+
+with open(output.name, 'rb') as input:
+    raw_data = input.read()
+    input.seek(0)
+    a2 = array.array('i')
+    a2.fromfile(input, len(a))
+```  
+
+
+# 第三章 算法  
+
+### 3.2 itertools--迭代器函数  
+
+- 3.2.1 合并并分解迭代器  
+chain()函数取多个迭代器作为参数，最后返回一个迭代器。
+```Python
+In [15]: from itertools import *
+
+In [16]: for i in chain([1,2,3],['a', 'b', 'c']):
+   ....:     print i,
+1 2 3 a b c
+
+In [17]: chain([1,2,3],['a', 'b', 'c'])
+Out[17]: <itertools.chain at 0x7ff7e7ea6a10>
+```  
+izip()返回一个迭代器，它会把多个迭代器的元素结合到一个元祖中。  
+```Python
+In [18]: for i in izip([1,2,3], ['a', 'b', 'c']):
+   ....:     print i 
+(1, 'a')
+(2, 'b')
+(3, 'c')
+```
+
+- 3.2.2 转换输入  
+imap()函数会返回一个函数其，它对输入迭代器中的值调用一个函数并返回结果。  
+```Python
+In [19]: for i in imap(lambda x:2*x, xrange(5)):
+   ....:     print i  
+0
+2
+4
+6
+8
+```  
+starmap()函数使用*语法分解一个迭代器中的元素作为映射函数的参数。  
+```Python
+In [22]: for i in starmap(lambda x,y:(x, y, x*y), values):
+   ....:     print '%d * %d = %d' %i  
+0 * 5 = 0
+1 * 6 = 6
+2 * 7 = 14
+3 * 8 = 24
+4 * 9 = 36
+```  
+
+- 3.2.3 生成新值  
+count()返回一个迭代器，能够无限生成连续整数。  
+cycle()返回一个迭代器，会无限地重复给定参数的内容。  
+repeat()返回的迭代器会一直返回数据，可选times参数来限制次数。    
+
+- 3.2.4 过滤  
+dropwhile()返回一个迭代器，它会生成输入迭代器中条件第一次为false之后的元素。  
+takewhile()与dropwhile()正好相反。  
+
+- 3.2.5 数据分组  
+groupby()函数返回一个迭代器，它会生成按一个公共键组织的值集。  
 
 
 # 第六章 文件系统  

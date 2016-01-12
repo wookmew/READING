@@ -9,11 +9,14 @@
 
 - [第二章 数据结构](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第二章-数据结构)  
 &emsp;- [2.1 collections--容器数据类型](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#21-collections--容器数据类型)  
-&emsp;- [2.2 array--固定类型数据序列]()  
+&emsp;- [2.2 array--固定类型数据序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#22-array--固定类型数据序列)  
 
-- [第三章 算法]()  
-&emsp;- [3.2 itertools--迭代器函数]()  
+- [第三章 算法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第三章-算法)  
+&emsp;- [3.2 itertools--迭代器函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#32-itertools--迭代器函数)  
+&emsp;- [3.4 contextlib--上下文管理器工具]()  
 
+- [第五章 数学计算]()  
+&emsp;- [5.3 random--伪随机数生成器]()  
 
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
@@ -372,6 +375,37 @@ takewhile()与dropwhile()正好相反。
 
 - 3.2.5 数据分组  
 groupby()函数返回一个迭代器，它会生成按一个公共键组织的值集。  
+
+
+### 3.4 contextlib--上下文管理器工具  
+
+- 3.4.2 从生成器到上下文管理器  
+可以使用contextmanager()修饰符将一个生成器函数转换为上下文管理器。  
+```Python
+import contextlib
+
+@contextlib.contextmanager
+def make_context():
+    pass
+```  
+看了一圈，没打看懂，暂时自己只有用with。嗯，放在这，下次再说。  
+
+
+# 第五章 数学计算  
+
+### 5.3 random--伪随机数生成器  
+
+- 5.3.1 生成随机数  
+random.random()生成随机数，ranom.uniform(1，100)可以指定范围。  
+
+- 5.3.2 指定种子  
+random.seed()值会控制生成伪随机数所用公式产生的第一个值，即下一次循环后，生成的都是一样的。  
+
+- 5.3.4 随机整数  
+random.randint(1, 100)生成整数，random.ranrange(1, 100, 5)。
+
+- 5.3.5 选择随机元素  
+random.choice()  
 
 
 # 第六章 文件系统  

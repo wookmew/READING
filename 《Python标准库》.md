@@ -13,10 +13,14 @@
 
 - [第三章 算法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第三章-算法)  
 &emsp;- [3.2 itertools--迭代器函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#32-itertools--迭代器函数)  
-&emsp;- [3.4 contextlib--上下文管理器工具]()  
+&emsp;- [3.4 contextlib--上下文管理器工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#34-contextlib--上下文管理器工具)  
 
-- [第五章 数学计算]()  
-&emsp;- [5.3 random--伪随机数生成器]()  
+- [第四章 日期和时间]()  
+&emsp;- [4.1 time--时钟时间]()  
+&emsp;- [4.2 datetime--日期和时间值管理]()  
+
+- [第五章 数学计算](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第五章-数学计算)  
+&emsp;- [5.3 random--伪随机数生成器](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#53-random--伪随机数生成器)  
 
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
@@ -389,6 +393,104 @@ def make_context():
     pass
 ```  
 看了一圈，没打看懂，暂时自己只有用with。嗯，放在这，下次再说。  
+
+
+# 第四章 日期和时间  
+
+### 4.1 time--时钟时间  
+
+- 4.4.1 壁挂钟时间  
+time.time()原来返回的是纪元开始到现在的时间。  
+```Python
+In [1]: import time
+
+In [2]: time.time()
+Out[2]: 1452647474.660122
+
+In [3]: time.ctime()
+Out[3]: 'Wed Jan 13 09:11:18 2016'
+
+In [4]: time.clock()  #clock()返回处理器时钟时间
+Out[4]: 0.595312
+```  
+
+- 4.1.3 时间组成  
+```Python
+In [1]: import time
+
+In [8]: time.gmtime()
+Out[8]: time.struct_time(tm_year=2016, tm_mon=1, tm_mday=13, tm_hour=1, tm_min=16, tm_sec=17, tm_wday=2, tm_yday=13, tm_isdst=0)
+
+In [12]: s = time.gmtime()
+s.tm_hour   s.tm_mday   s.tm_mon    s.tm_wday   s.tm_year   
+s.tm_isdst  s.tm_min    s.tm_sec    s.tm_yday   
+
+In [14]: s.tm_year
+Out[14]: 2016
+```  
+
+- 4.1.5 解析和格式化时间  
+time模块提供了两个函数striptime()和strftime()，实现了struct_time和时间值字符串表示之间转换。  
+```Python
+In [1]: import time
+
+In [15]: now = time.ctime()
+
+In [16]: p = time.strptime(now)
+
+In [17]: p
+Out[17]: time.struct_time(tm_year=2016, tm_mon=1, tm_mday=13, tm_hour=9, tm_min=30, tm_sec=55, tm_wday=2, tm_yday=13, tm_isdst=-1)
+
+In [18]: time.strftime("%a %b %d %H:%M:%S %Y", p)
+Out[18]: 'Wed Jan 13 09:30:55 2016'
+```  
+
+### 4.2 datetime--日期和时间值管理  
+
+- 4.2.1 时间  
+time([hour[, minute[, second[, microsecond[, tzinfo]]]]]) --> a time object  
+```Python
+In [1]: import datetime
+
+In [2]: t = datetime.time()
+t.dst          t.max          t.minute       t.second       t.tzname
+t.hour         t.microsecond  t.replace      t.strftime     t.utcoffset
+t.isoformat    t.min          t.resolution   t.tzinfo     
+```  
+
+- 4.2.2 日期  
+```Python
+In [1]: import datetime
+
+In [7]: today = datetime.date.today()
+
+In [8]: today
+Out[8]: datetime.date(2016, 1, 13)
+
+In [11]: today = datetime.datetime.today()
+
+In [12]: today
+Out[12]: datetime.datetime(2016, 1, 13, 9, 42, 38, 621284)  
+```  
+
+- 4.2.4 日期算术运算  
+```Python
+In [1]: import datetime
+
+In [12]: today
+Out[12]: datetime.datetime(2016, 1, 13, 9, 42, 38, 621284)
+
+In [13]: oneday = datetime.timedelta(days=1)
+
+In [14]: yesterday = today - oneday
+
+In [15]: yesterday
+Out[15]: datetime.datetime(2016, 1, 12, 9, 42, 38, 621284) 
+```  
+
+- 4.2.7 格式化和解析  
+和time模块类似  
+
 
 
 # 第五章 数学计算  

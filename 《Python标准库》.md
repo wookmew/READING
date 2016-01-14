@@ -15,9 +15,9 @@
 &emsp;- [3.2 itertools--迭代器函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#32-itertools--迭代器函数)  
 &emsp;- [3.4 contextlib--上下文管理器工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#34-contextlib--上下文管理器工具)  
 
-- [第四章 日期和时间]()  
-&emsp;- [4.1 time--时钟时间]()  
-&emsp;- [4.2 datetime--日期和时间值管理]()  
+- [第四章 日期和时间](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第四章-日期和时间)  
+&emsp;- [4.1 time--时钟时间](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#41-time--时钟时间)  
+&emsp;- [4.2 datetime--日期和时间值管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#42-datetime--日期和时间值管理)  
 
 - [第五章 数学计算](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第五章-数学计算)  
 &emsp;- [5.3 random--伪随机数生成器](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#53-random--伪随机数生成器)  
@@ -27,6 +27,7 @@
 &emsp;- [6.3 linecache--高效读取文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#63-linecache--高效读取文件)  
 &emsp;- [6.4 tempfile--临时文件系统对象](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#64-tempfile--临时文件系统对象)  
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
+&emsp;- [6.8 StringIO--提供类文件API的文本缓冲区]()  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
 &emsp;- [7.1 pickle--对象串行化](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#71-pickle--对象串行化)  
@@ -39,6 +40,9 @@
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
 &emsp;- [10.4 multiprooessing--像线程一样管理进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#104-multiprooessing--像线程一样管理进程)  
+
+- [第十二章 Internet]()  
+&emsp;- [12.9 json--JavaScript对象记法]()  
 
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
 &emsp;- [14.7 shlex--解析shell](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#147-shlex--解析shell)  
@@ -711,6 +715,25 @@ from shutil import *
 move('example.txt', 'example.out')
 ```  
 
+### 6.8 StringIO--提供类文件API的文本缓冲区  
+该模块可以用来处理内存中的文本,用cStringIO好。  
+```Python  
+try:
+    from cStringIO import StringIO
+except:
+    from StringIO import StringIO
+
+output = StringIO()
+output.write('This goes into the buffer')
+
+print output.getvalue()
+output.close()
+
+input = StringIO('Inital value for read buffer')
+print input.read()
+```  
+
+
 
 # 第七章 数据持久存储与交换  
 
@@ -1148,6 +1171,28 @@ Event类，通过使用一个可选的超时值，事件对象可以等待其状
 
 - 10.4.17 进程池  
 Pool类来管理固定数目的工作进程，pool参数包括进程数以及启动任务进程时要进行的函数.pool.map()方法等价于内置map()，只不过单个任务会并行运行。
+
+
+# 第十二章 Internet  
+
+### 12.9 json--JavaScript对象记法  
+
+- 12.9.2 优质输出和紧凑输出  
+```Python
+import json
+
+#dumps()函数接受多个参数，sort_keys标志会告诉编码器按有序顺序而不是随机顺序输出字典的键。  
+json.dumps(data, sort_keys=True)
+
+#indent用来制定一个缩进。  
+json.dumps(data, sort_keys=True, indent=2)
+```  
+
+- 12.9.5 编码器和解码器类  
+JSONEncoder使用一个可迭代接口生成编码数据“块”，从而更容易写至文件或网络套接字。  
+
+- 12.9.7 混合数据流  
+JSONDecoder包含一个raw_decode()方法。
 
 
 # 第十四章 应用构建模块  

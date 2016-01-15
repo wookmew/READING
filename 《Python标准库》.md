@@ -27,7 +27,8 @@
 &emsp;- [6.3 linecache--高效读取文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#63-linecache--高效读取文件)  
 &emsp;- [6.4 tempfile--临时文件系统对象](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#64-tempfile--临时文件系统对象)  
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
-&emsp;- [6.8 StringIO--提供类文件API的文本缓冲区]()  
+&emsp;- [6.8 StringIO--提供类文件API的文本缓冲区](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#68-stringio--提供类文件api的文本缓冲区)  
+&emsp;- [6.11 filecmp--比较文件]()  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
 &emsp;- [7.1 pickle--对象串行化](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#71-pickle--对象串行化)  
@@ -37,12 +38,15 @@
 &emsp;- [8.4 tarfile--Tar归档访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#84-tarfile--tar归档访问)  
 &emsp;- [8.5 zipfile--ZIP归档访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#85-zipfile--zip归档访问)  
 
+- [第九章 加密]()  
+&emsp;- [9.1 hashlib--密码散列]()
+
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
 &emsp;- [10.4 multiprooessing--像线程一样管理进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#104-multiprooessing--像线程一样管理进程)  
 
-- [第十二章 Internet]()  
-&emsp;- [12.9 json--JavaScript对象记法]()  
+- [第十二章 Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十二章-internet)  
+&emsp;- [12.9 json--JavaScript对象记法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#129-json--javascript对象记法)  
 
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
 &emsp;- [14.7 shlex--解析shell](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#147-shlex--解析shell)  
@@ -733,6 +737,25 @@ input = StringIO('Inital value for read buffer')
 print input.read()
 ```  
 
+### 6.11 filecmp--比较文件  
+
+- 6.11.2 比较文件  
+```Python  
+In [1]: import filecmp
+
+In [2]: print filecmp.cmp('1.txt', '2.txt', shallow=False)
+```  
+shallow参数告诉cmp()除了文件的元数据外，是否还要查看文件的内容。  
+如果非递归地比较两个目录的一组文件，可以使用cmpfiles()。参数是目录名和两个位置上要检查的文件列表。cmpfiles()将返回3个文件名列表，分别包含匹配的文件、不匹配的文件和不能比较的文件。  
+
+- 6.11.3 比较目录   
+```Python  
+In [1]: import filecmp
+
+In [3]: filecmp.dircmp('home/dir1', 'home/dir2').report()
+```  
+report()显示的结果只包括给定目录的内容，而不会递归比较其子目录，report_full_closure()能得到更详细的递归比较。  
+
 
 
 # 第七章 数据持久存储与交换  
@@ -894,6 +917,30 @@ print_info('write.zip')
 
 - 8.5.8 追加到文件  
 mode='a'即可。  
+
+
+# 第九章 加密  
+
+### 9.1 hashlib--密码散列  
+由于hashlib得到了OpenSSL的“支持”，OpenSSL库提供的所有算法都可用。像：md5,sha1,sha224,sha256,sha384,sha512.  
+不过这个大家都知道怎么破解，文字加密比它强吧。  
+
+- MD5  
+```Python
+In [1]: import hashlib
+
+In [2]: h = hashlib.md5()  #sha1同理，用的是hashlib.sha1()
+
+In [3]: l = 'gjj'
+
+In [4]: h.update(l)
+
+In [5]: h.digest()
+Out[5]: '\xc8\xa9[\x06\x18\x19y0\xdf\xb55I!a}\xf5'
+
+In [6]: h.hexdigest()
+Out[6]: 'c8a95b0618197930dfb5354921617df5'
+```  
 
 
 # 第十章 进程与线程  

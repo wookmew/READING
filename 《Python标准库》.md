@@ -27,8 +27,9 @@
 &emsp;- [6.3 linecache--高效读取文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#63-linecache--高效读取文件)  
 &emsp;- [6.4 tempfile--临时文件系统对象](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#64-tempfile--临时文件系统对象)  
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
+&emsp;- [6.7 codecs--字符串编码和解码]()  
 &emsp;- [6.8 StringIO--提供类文件API的文本缓冲区](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#68-stringio--提供类文件api的文本缓冲区)  
-&emsp;- [6.11 filecmp--比较文件]()  
+&emsp;- [6.11 filecmp--比较文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#611-filecmp--比较文件)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
 &emsp;- [7.1 pickle--对象串行化](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#71-pickle--对象串行化)  
@@ -38,8 +39,8 @@
 &emsp;- [8.4 tarfile--Tar归档访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#84-tarfile--tar归档访问)  
 &emsp;- [8.5 zipfile--ZIP归档访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#85-zipfile--zip归档访问)  
 
-- [第九章 加密]()  
-&emsp;- [9.1 hashlib--密码散列]()
+- [第九章 加密](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第九章-加密)  
+&emsp;- [9.1 hashlib--密码散列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#91-hashlib--密码散列)
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
@@ -718,6 +719,18 @@ from shutil import *
 
 move('example.txt', 'example.out')
 ```  
+
+### 6.7 codecs--字符串编码和解码  
+codecs模块提供了刘接口和文件接口来转换数据。通常用于处理Unicode文本，不过也提供了其他编码来满足其他用途。  
+
+- 6.7.2 处理文件  
+open(filename, mode='rb', encoding=None, errors='strict', buffering=1)  
+Open an encoded file using the given mode and return a wrapped version providing transparent encoding/decoding.  
+PS:**必须提前知道编码，才能正确地建立解码器。**  
+
+- 6.7.3 字节序  
+在不同计算机系统之间传输数据时，多字节编码(如UTF-16和UTF-32)会引发一个问题。不同系统中使用的高字节和低字节的顺序不同。数据的这个特性，称为字节序。通常没办法提前知道给定的一组数据要使用哪一种字节序，所以多字节编码还包含一个字节序标志(BOM)，这个标志出现在编码输出的前几个字节。如，UTF-16和UTF-32所用字节序标志的相应常量.  
+
 
 ### 6.8 StringIO--提供类文件API的文本缓冲区  
 该模块可以用来处理内存中的文本,用cStringIO好。  

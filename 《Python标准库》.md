@@ -47,6 +47,8 @@
 &emsp;- [10.4 multiprooessing--像线程一样管理进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#104-multiprooessing--像线程一样管理进程)  
 
 - [第十二章 Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十二章-internet)  
+&emsp;- [12.3 urllib--网络资源访问]()  
+&emsp;- [12.4 urllib2--网络资源访问]()  
 &emsp;- [12.9 json--JavaScript对象记法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#129-json--javascript对象记法)  
 
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
@@ -1234,6 +1236,38 @@ Pool类来管理固定数目的工作进程，pool参数包括进程数以及启
 
 
 # 第十二章 Internet  
+
+### 12.3 urllib--网络资源访问  
+关于网络爬虫方面，我一般都是选择requests+lxml+re，自己写。  
+
+- 12.3.1 利用缓存实现简单获取  
+可以用urlretrieve()，urlretrieve(url, filename=None, reporthook=None, data=None)，调用reporthook()报告下载进度。  
+
+- 12.3.2 参数编码  
+urlencode()函数可以做到。  
+
+- 12.3.3 路径与URL  
+pathname2url()和url2pathname()之间可以来回切换，ipython里面试了下，感觉没啥。
+
+
+### 12.4 urllib2--网络资源访问  
+
+- 12.4.1 HTTP GET  
+将URL传入urlopen()中，针对其返回值，info()方法从HTTP服务器访问首部，可使用read()和readlines()等方法访问远程资源。  
+
+- 12.4.3 HTTP POST  
+需要将编码的查询参数作为数据传入urlopen()中，即用到urllib.urlencode()。  
+
+- 12.4.4 增加发出首部  
+即增加u-a信息。  
+
+- 12.4.6 上传文件  
+在请求体中构造一个完整的MIME消息。  
+```Python
+import mimetools
+import mimetypes
+```  
+
 
 ### 12.9 json--JavaScript对象记法  
 

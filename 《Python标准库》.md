@@ -10,7 +10,7 @@
 - [第二章 数据结构](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第二章-数据结构)  
 &emsp;- [2.1 collections--容器数据类型](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#21-collections--容器数据类型)  
 &emsp;- [2.2 array--固定类型数据序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#22-array--固定类型数据序列)  
-&emsp;- [2.5 Queue--线程安全的FIFO实现]()  
+&emsp;- [2.5 Queue--线程安全的FIFO实现](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#25-queue--线程安全的fifo实现)  
 
 - [第三章 算法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第三章-算法)  
 &emsp;- [3.2 itertools--迭代器函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#32-itertools--迭代器函数)  
@@ -28,7 +28,7 @@
 &emsp;- [6.3 linecache--高效读取文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#63-linecache--高效读取文件)  
 &emsp;- [6.4 tempfile--临时文件系统对象](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#64-tempfile--临时文件系统对象)  
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
-&emsp;- [6.7 codecs--字符串编码和解码]()  
+&emsp;- [6.7 codecs--字符串编码和解码](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#67-codecs--字符串编码和解码)  
 &emsp;- [6.8 StringIO--提供类文件API的文本缓冲区](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#68-stringio--提供类文件api的文本缓冲区)  
 &emsp;- [6.11 filecmp--比较文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#611-filecmp--比较文件)  
 
@@ -45,6 +45,7 @@
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
+&emsp;- [10.3 threading--管理并发操作]()  
 &emsp;- [10.4 multiprooessing--像线程一样管理进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#104-multiprooessing--像线程一样管理进程)  
 
 - [第十二章 Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十二章-internet)  
@@ -1081,6 +1082,41 @@ sys.stdout.flush()
 os.killpg(proc.pid, signal.SIGUSR1)
 time.sleep(3)
 ```  
+
+### 10.3 threading--管理并发操作  
+
+- 10.3.1 Thread对象  
+实例化一个Thread对象，并调用start()让它开始工作。  
+
+- 10.3.2 确定当前线程  
+```Python
+import threading
+threading.currentThread().getName()  
+```  
+
+- 10.3.3 守护与非守护线程  
+win没法用，暂时先学习着吧。要标志一个线程为守护县城，需调用setDaemon()方法，并提供参数True。  
+```Python
+import threading
+
+d = threading.Thread(name='deamon', target=deamon)
+d.setDaemon(True) 
+```  
+
+- 10.3.4 列举所有线程  
+```Python
+import threading
+
+main_thread = threading.currentThread()
+for t in threading.enumerate():
+    if t in main_thread:
+        continue
+    t.join() 
+```  
+
+- 10.3.8 控制资源访问  
+使用Lock对象进行处理。  
+
 
 
 ### 10.4 multiprooessing--像线程一样管理进程  

@@ -45,8 +45,11 @@
 
 - [第十章 进程与线程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十章-进程与线程)  
 &emsp;- [10.1 subprocess---创建附加进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#101-subprocess---创建附加进程)  
-&emsp;- [10.3 threading--管理并发操作]()  
+&emsp;- [10.3 threading--管理并发操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#103-threading--管理并发操作)  
 &emsp;- [10.4 multiprooessing--像线程一样管理进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#104-multiprooessing--像线程一样管理进程)  
+
+- [第十一章 网络通信]()  
+&emsp;- [11.1 socket--网络通信]()
 
 - [第十二章 Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十二章-internet)  
 &emsp;- [12.3 urllib--网络资源访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#123-urllib--网络资源访问)  
@@ -1277,7 +1280,17 @@ Event类，通过使用一个可选的超时值，事件对象可以等待其状
 创建一个连接池，Manager创建的特殊类型列表对象集中维护活动进程列表,Manager负责协调其所有用户之间的共享信息状态。除了列表和字典之外，Manager还可以创建一个共享Namespace。  
 
 - 10.4.17 进程池  
-Pool类来管理固定数目的工作进程，pool参数包括进程数以及启动任务进程时要进行的函数.pool.map()方法等价于内置map()，只不过单个任务会并行运行。
+Pool类来管理固定数目的工作进程，pool参数包括进程数以及启动任务进程时要进行的函数.pool.map()方法等价于内置map()，只不过单个任务会并行运行。  
+
+
+# 第十一章 网络通信  
+
+### 11.1 socket--网络通信  
+
+- 11.1.1 寻址、协议簇和套接字类型  
+套接字(socket)是程序在本地或者通过互联网来回传递数据时所用通信通道的一个端点。套接字有两个主要属性来控制如何发送数据:地址簇(address family)控制所用的OSI网络协议，套接字类型(socket type)控制传输层协议。  
+查找当前主机名字：gethostname();gethostbyname()将服务器名字转换为其数字地址；getservbyname()可以用网络服务的端口号和标准名查找。  
+
 
 
 # 第十二章 Internet  

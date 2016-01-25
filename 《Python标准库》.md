@@ -22,6 +22,7 @@
 
 - [第五章 数学计算](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第五章-数学计算)  
 &emsp;- [5.3 random--伪随机数生成器](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#53-random--伪随机数生成器)  
+&emsp;- [5.4 math--数学函数]()
 
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
@@ -48,8 +49,8 @@
 &emsp;- [10.3 threading--管理并发操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#103-threading--管理并发操作)  
 &emsp;- [10.4 multiprooessing--像线程一样管理进程](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#104-multiprooessing--像线程一样管理进程)  
 
-- [第十一章 网络通信]()  
-&emsp;- [11.1 socket--网络通信]()
+- [第十一章 网络通信](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十一章-网络通信)  
+&emsp;- [11.1 socket--网络通信](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#111-socket--网络通信)
 
 - [第十二章 Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十二章-internet)  
 &emsp;- [12.3 urllib--网络资源访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#123-urllib--网络资源访问)  
@@ -532,6 +533,15 @@ random.randint(1, 100)生成整数，random.ranrange(1, 100, 5)。
 
 - 5.3.5 选择随机元素  
 random.choice()  
+
+
+### 5.4 math--数学函数  
+
+- 5.4.3 转换为整数  
+trunc()，会截断小数点后的数字；floor()将其输入转换为不大于他的最大整数；ceil()(上限)会生成按顺序排在这个输入值之后的最小整数。  
+
+- 5.4.4 正号和负号   
+fabs()可以计算一个浮点数的绝对值.
 
 
 # 第六章 文件系统  

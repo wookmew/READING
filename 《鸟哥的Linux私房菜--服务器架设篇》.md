@@ -3,6 +3,7 @@
 - [第二章 网络的基本概念](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8A%E9%B8%9F%E5%93%A5%E7%9A%84Linux%E7%A7%81%E6%88%BF%E8%8F%9C--%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E8%AE%BE%E7%AF%87%E3%80%8B.md#第二章-网络的基本概念)
 - [第四章 连接Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8A%E9%B8%9F%E5%93%A5%E7%9A%84Linux%E7%A7%81%E6%88%BF%E8%8F%9C--%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E8%AE%BE%E7%AF%87%E3%80%8B.md#第四章-连接internet)  
 - [第五章 Linux中常用的网络命令](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8A%E9%B8%9F%E5%93%A5%E7%9A%84Linux%E7%A7%81%E6%88%BF%E8%8F%9C--%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E8%AE%BE%E7%AF%87%E3%80%8B.md#第五章-linux中常用的网络命令)  
+- [第七章 网络安全与主机基本防护:限制端口、网络升级与SELinux]()
 
 
 
@@ -61,4 +62,5 @@ OSI七层协议与TCP/IP
 - nc可用来取代telnet进行某些服务器端口的监测工作。  
 
 
-# 
+# 第七章 网络安全与主机基本防护:限制端口、网络升级与SELinux  
+- Linux有两层防火墙：第一层是数据包过滤式的Net Filter防火墙，第二层是通过软件管理的TCP Wrappers。  

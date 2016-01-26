@@ -22,7 +22,7 @@
 
 - [第五章 数学计算](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第五章-数学计算)  
 &emsp;- [5.3 random--伪随机数生成器](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#53-random--伪随机数生成器)  
-&emsp;- [5.4 math--数学函数]()
+&emsp;- [5.4 math--数学函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#54-math--数学函数)  
 
 - [第六章 文件系统](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第六章-文件系统)  
 &emsp;- [6.1 os.path--平台独立的文件名管理](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#61-ospath--平台独立的文件名管理)  
@@ -31,6 +31,7 @@
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 &emsp;- [6.7 codecs--字符串编码和解码](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#67-codecs--字符串编码和解码)  
 &emsp;- [6.8 StringIO--提供类文件API的文本缓冲区](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#68-stringio--提供类文件api的文本缓冲区)  
+&emsp;- [6.10 dircache--缓存目录列表]()  
 &emsp;- [6.11 filecmp--比较文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#611-filecmp--比较文件)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
@@ -60,6 +61,7 @@
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
 &emsp;- [14.7 shlex--解析shell](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#147-shlex--解析shell)  
 &emsp;- [14.9 日志--报告状态、错误和信息消息](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#149-日志--报告状态错误和信息消息)  
+&emsp;- [14.11 atexit--程序关闭回调]()  
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.3 unittest--自动测试框架](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#163-unittest--自动测试框架)  
@@ -775,6 +777,16 @@ input = StringIO('Inital value for read buffer')
 print input.read()
 ```  
 
+### 6.10 dircache--缓存目录列表  
+dircache模块从文件系统读取目录列表，并保存在内存中。  
+
+- 6.10.1 列出目录内容  
+dircache.listdir()作用和os.listdir()一样。  
+
+- 6.10.2 标注列表  
+annotate()，它会修改list()(如listdir()返回的list)，向表示目录的名称末尾增加一个"/"。
+
+
 ### 6.11 filecmp--比较文件  
 
 - 6.11.2 比较文件  
@@ -1455,6 +1467,22 @@ for filename in logfiles:
     print filename
 ```  
 
+### 14.11 atexit--程序关闭回调  
+atexit模块提供了一个接口，来注册程序正常关闭时调用的函数。sys模块还提供了一个hook，sys.exitfunc，不过这里只能注册一个函数。atexit注册表可以由多个模块和库同时使用。  
+
+- 14.11.1 示例  
+```Python
+import atexit 
+
+def all_done():
+    print 'lol'
+
+atexit.register(all_done)
+```  
+可以注册多个函数，并向注册的函数传递参数。PS:**退出函数时会按注册的逆序来调用**  
+
+- 14.11.3 处理异常  
+atexit回调中所产生异常的Traceback会打印到控制台上。  
 
 
 # 第十六章 开发工具  

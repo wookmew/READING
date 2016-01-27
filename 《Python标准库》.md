@@ -11,6 +11,7 @@
 &emsp;- [2.1 collections--容器数据类型](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#21-collections--容器数据类型)  
 &emsp;- [2.2 array--固定类型数据序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#22-array--固定类型数据序列)  
 &emsp;- [2.5 Queue--线程安全的FIFO实现](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#25-queue--线程安全的fifo实现)  
+&emsp;- [2.6 struct--二进制数据结构]()  
 
 - [第三章 算法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第三章-算法)  
 &emsp;- [3.2 itertools--迭代器函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#32-itertools--迭代器函数)  
@@ -31,7 +32,7 @@
 &emsp;- [6.5 shutil--高级文件操作](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#65-shutil--高级文件操作)  
 &emsp;- [6.7 codecs--字符串编码和解码](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#67-codecs--字符串编码和解码)  
 &emsp;- [6.8 StringIO--提供类文件API的文本缓冲区](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#68-stringio--提供类文件api的文本缓冲区)  
-&emsp;- [6.10 dircache--缓存目录列表]()  
+&emsp;- [6.10 dircache--缓存目录列表](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#610-dircache--缓存目录列表)  
 &emsp;- [6.11 filecmp--比较文件](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#611-filecmp--比较文件)  
 
 - [第七章 数据持久存储与交换](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第七章-数据持久存储与交换)  
@@ -61,7 +62,7 @@
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
 &emsp;- [14.7 shlex--解析shell](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#147-shlex--解析shell)  
 &emsp;- [14.9 日志--报告状态、错误和信息消息](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#149-日志--报告状态错误和信息消息)  
-&emsp;- [14.11 atexit--程序关闭回调]()  
+&emsp;- [14.11 atexit--程序关闭回调](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#1411-atexit--程序关闭回调)  
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.3 unittest--自动测试框架](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#163-unittest--自动测试框架)  
@@ -346,6 +347,49 @@ with open(output.name, 'rb') as input:
 
 - 2.5.2 LIFO队列  
 后进先出  
+
+### 2.6 struct--二进制数据结构  
+有的时候需要用python处理二进制数据，比如，存取文件，socket操作时.这时候，可以使用python的struct模块来完成.可以用 struct来处理c语言中的结构体.  
+
+- 2.6.2 打包和解包  
+Struct支持使用格式指示符将数据打包(packing)为字符串，以及从字符串解包(unpacking)数据。  
+```Python
+In [1]: import struct
+
+In [2]: import binascii
+
+In [3]: values = (1, 'ab', 2.7)
+
+In [4]: s = struct.Struct('I 2s f')
+
+In [6]: packed_data = s.pack(*values)  #打包
+
+In [7]: s.format
+Out[7]: 'I 2s f'
+
+In [8]: s.size  #size指代缓存区需要有多大
+Out[8]: 12
+
+In [9]: binascii.hexlify(packed_data)  #hexlify转换为16进制  
+Out[9]: '0100000061620000cdcc2c40'  
+
+In [10]: data = binascii.unhexlify('0100000061620000cdcc2c40')
+
+In [11]: unpack_data = s.unpack(data)  # unpack
+
+In [12]: unpack_data
+Out[12]: (1, 'ab', 2.700000047683716)
+```  
+
+- 2.6.3 字节序  
+即形如**('<I', args)**这个形式，<表示顺序，I指代C语言中的数据类型。  
+| Character   | Byte order                         |
+| :---------- | :--------------------------------: |
+| @           | native                             |
+| =           | native                             |
+| <           | little-endian                      |
+| >           | big-endian                         |
+| !           | network (= big-endian)             |
 
 
 # 第三章 算法  

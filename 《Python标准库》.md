@@ -10,8 +10,10 @@
 - [第二章 数据结构](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第二章-数据结构)  
 &emsp;- [2.1 collections--容器数据类型](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#21-collections--容器数据类型)  
 &emsp;- [2.2 array--固定类型数据序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#22-array--固定类型数据序列)  
+&emsp;- [2.4 bisect--维护有序列表]()  
 &emsp;- [2.5 Queue--线程安全的FIFO实现](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#25-queue--线程安全的fifo实现)  
-&emsp;- [2.6 struct--二进制数据结构]()  
+&emsp;- [2.6 struct--二进制数据结构](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#26-struct--二进制数据结构)  
+&emsp;- [2.7 weakref--对象的非永久引用]()  
 
 - [第三章 算法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第三章-算法)  
 &emsp;- [3.2 itertools--迭代器函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#32-itertools--迭代器函数)  
@@ -340,6 +342,25 @@ with open(output.name, 'rb') as input:
     a2.fromfile(input, len(a))
 ```  
 
+### 2.4 bisect--维护有序列表  
+bisect模块实现了一个算法用于向列表中插入元素，同时仍保持列表有序。  
+
+- 2.4.1 有序插入  
+```Python
+import bisect
+import random
+
+l = []
+for i in range(1, 15):
+    r = random.randint(1, 100)
+    position = bisect.bisect(l, r)
+    bisect.insort(l, r)
+```  
+
+- 2.4.2 处理重复  
+insort()函数实际是insort_right()的别名，这个函数会在现有值之后插入新值。相应的函数insert_left()则在现有值之前插入新值。  
+
+
 ### 2.5 Queue--线程安全的FIFO实现  
 
 - 2.5.1 基本FIFO队列  
@@ -383,13 +404,34 @@ Out[12]: (1, 'ab', 2.700000047683716)
 
 - 2.6.3 字节序  
 即形如**('<I', args)**这个形式，<表示顺序，I指代C语言中的数据类型。  
-| Character   | Byte order                         |
-| :---------- | :--------------------------------: |
-| @           | native                             |
-| =           | native                             |
-| <           | little-endian                      |
-| >           | big-endian                         |
-| !           | network (= big-endian)             |
+| Character   | Byte order                         |  
+| :-----------| :---------------------------------:|  
+| @           | native                             |  
+| =           | native                             |  
+| <           | little-endian                      |  
+| >           | big-endian                         |  
+| !           | network (= big-endian)             |  
+
+
+### 2.7 weakref--对象的非永久引用  
+弱引用(weak reference)可以避免对象被自动清除的一个对象句柄。  
+
+- 2.7.2 引用回调  
+```Python
+import weakref 
+
+class ExpensiveObject(object):
+    def __del__(self):
+        print 'deleting %s' %self
+
+def callback(reference):
+    print reference  
+
+obj = ExpensiveObject()
+r = weakref.ref(obj, callback)
+```  
+
+
 
 
 # 第三章 算法  

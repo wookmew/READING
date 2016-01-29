@@ -10,10 +10,10 @@
 - [第二章 数据结构](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第二章-数据结构)  
 &emsp;- [2.1 collections--容器数据类型](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#21-collections--容器数据类型)  
 &emsp;- [2.2 array--固定类型数据序列](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#22-array--固定类型数据序列)  
-&emsp;- [2.4 bisect--维护有序列表]()  
+&emsp;- [2.4 bisect--维护有序列表](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#24-bisect--维护有序列表)  
 &emsp;- [2.5 Queue--线程安全的FIFO实现](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#25-queue--线程安全的fifo实现)  
 &emsp;- [2.6 struct--二进制数据结构](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#26-struct--二进制数据结构)  
-&emsp;- [2.7 weakref--对象的非永久引用]()  
+&emsp;- [2.7 weakref--对象的非永久引用](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#27-weakref--对象的非永久引用)  
 
 - [第三章 算法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第三章-算法)  
 &emsp;- [3.2 itertools--迭代器函数](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#32-itertools--迭代器函数)  
@@ -59,6 +59,7 @@
 - [第十二章 Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十二章-internet)  
 &emsp;- [12.3 urllib--网络资源访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#123-urllib--网络资源访问)  
 &emsp;- [12.4 urllib2--网络资源访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#124-urllib2--网络资源访问)  
+&emsp;- [12.5 Base64--用ASCII编码二进制数据]()  
 &emsp;- [12.9 json--JavaScript对象记法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#129-json--javascript对象记法)  
 
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
@@ -1434,6 +1435,9 @@ import mimetools
 import mimetypes
 ```  
 
+### 12.5 Base64--用ASCII编码二进制数据  
+Base64、Base32和Base16编码将8位字节分别转为每字节有6、5或4位有用数据的值。  
+ 
 
 ### 12.9 json--JavaScript对象记法  
 

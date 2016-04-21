@@ -59,13 +59,14 @@
 - [第十二章 Internet](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十二章-internet)  
 &emsp;- [12.3 urllib--网络资源访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#123-urllib--网络资源访问)  
 &emsp;- [12.4 urllib2--网络资源访问](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#124-urllib2--网络资源访问)  
-&emsp;- [12.5 Base64--用ASCII编码二进制数据]()  
+&emsp;- [12.5 Base64--用ASCII编码二进制数据](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#125-base64--用ascii编码二进制数据)  
 &emsp;- [12.9 json--JavaScript对象记法](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#129-json--javascript对象记法)  
 
 - [第十四章 应用构建模块](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十四章-应用构建模块)  
 &emsp;- [14.7 shlex--解析shell](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#147-shlex--解析shell)  
 &emsp;- [14.9 日志--报告状态、错误和信息消息](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#149-日志--报告状态错误和信息消息)  
 &emsp;- [14.11 atexit--程序关闭回调](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#1411-atexit--程序关闭回调)  
+&emsp;- [14.12 sched--定时时间调度器]()
 
 - [第十六章 开发工具](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#第十六章-开发工具)  
 &emsp;- [16.3 unittest--自动测试框架](https://github.com/GJBLUE/READING-/blob/master/%E3%80%8APython%E6%A0%87%E5%87%86%E5%BA%93%E3%80%8B.md#163-unittest--自动测试框架)  
@@ -1573,6 +1574,30 @@ atexit.register(all_done)
 
 - 14.11.3 处理异常  
 atexit回调中所产生异常的Traceback会打印到控制台上。  
+
+
+###  14.12 sched--定时时间调度器  
+
+- 14.12.1 有延迟地运行事件  
+enter()有四个参数：表延迟的数、优先级值、要调用的函数、函数参数的元组。  
+
+- 14.12.3 事件优先级  
+```Python
+import sched
+import time
+
+scheduler = sched.scheduler(time.time, time.sleep)
+
+def print_event(name):
+    print 'EVENT:', time.ctime(time.time()), name
+
+now = time.time()
+print 'START:', time.ctime(now)
+scheduler.enterabs(now+2, 2, print_event, ('first',))
+scheduler.enterabs(now+2, 1, print_event, ('second',))
+
+scheduler.run()
+```  
 
 
 # 第十六章 开发工具  
